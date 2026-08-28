@@ -1,18 +1,25 @@
 import { useEffect, useState } from 'react';
 import { fetchGif } from '../lib/giphy';
-import squiggleUnderline from '../assets/figma/squiggle-underline.svg';
-import flame from '../assets/figma/flame.svg';
+import { categoryName, allRevelations } from '../data/revelations';
 
-// Palabras largas sin espacios (ej. "Plenipotentiary", 15) no tienen dónde
-// hacer un salto de línea natural — si el tamaño es fijo, el navegador corta
-// la palabra a la mitad. Bajamos el tamaño según el largo de la palabra más
-// larga del título para que entre en una sola línea.
-const getTitleSizeClass = (word) => {
-  const longestChunk = Math.max(...word.split(' ').map(w => w.length));
-  if (longestChunk <= 9) return 'text-3xl sm:text-4xl lg:text-4xl';
-  if (longestChunk <= 13) return 'text-2xl sm:text-3xl lg:text-3xl';
-  if (longestChunk <= 17) return 'text-xl sm:text-2xl lg:text-2xl';
-  return 'text-lg sm:text-xl lg:text-xl';
+// Palabras largas en Playfair Black rompen feo a mitad de la palabra si el
+// tamaño es fijo — igual que "Plenipotentiary" (15) o "Reconocimiento" (14).
+// Bajamos el tamaño según el largo para que casi siempre entre en una línea.
+const getHeadlineSize = (word) => {
+  const len = word.length;
+  if (len <= 8) return 'clamp(2.6rem, 8vw, 4.2rem)';
+  if (len <= 11) return 'clamp(2.1rem, 7vw, 3.4rem)';
+  if (len <= 14) return 'clamp(1.8rem, 6vw, 2.8rem)';
+  return 'clamp(1.5rem, 5vw, 2.3rem)';
+};
+
+const formatDate = (lang) => {
+  const d = new Date();
+  return d.toLocaleDateString(lang === 'es' ? 'es-ES' : 'en-US', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'short',
+  });
 };
 
 export const RevelationCard = ({
@@ -22,20 +29,25 @@ export const RevelationCard = ({
   onShare,
   onFavorite,
   isToday = false,
+  streak = 1,
 }) => {
   const [gifUrl, setGifUrl] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let cancelled = false;
     const loadGif = async () => {
       setLoading(true);
+      setGifUrl(null);
       const query = lang === 'es' ? revelation.gifQueryES : revelation.gifQueryEN;
       const url = await fetchGif(query, lang);
-      setGifUrl(url);
-      setLoading(false);
+      if (!cancelled) {
+        setGifUrl(url);
+        setLoading(false);
+      }
     };
-
     loadGif();
+    return () => { cancelled = true; };
   }, [revelation, lang]);
 
   const word = lang === 'es' ? revelation.wordES : revelation.wordEN;
@@ -43,94 +55,79 @@ export const RevelationCard = ({
   const revelationText = lang === 'es' ? revelation.revelationES : revelation.revelationEN;
 
   return (
-    <div className="w-full animate-scale-in">
-      {/* Título: "Revelación de hoy" + subrayado ondulado */}
-      <div className="flex flex-col items-center gap-2 mb-6 animate-slide-up-fade">
-        <p className="text-hell-gold font-semibold text-base lg:text-xl">
+    <article className="w-full bg-paper border-t-[3px] border-ink animate-fade-in">
+      <div className="flex items-baseline justify-between border-b border-ink pt-5 pb-3 mb-8">
+        <span className="font-nameplate text-[10px] tracking-widest uppercase text-sub">
           {isToday
-            ? (lang === 'es' ? 'Revelación de hoy' : "Today's revelation")
-            : (lang === 'es' ? 'Revelación' : 'Revelation')}
-        </p>
-        <img src={squiggleUnderline} alt="" className="h-3 w-40 lg:w-48" />
+            ? `${lang === 'es' ? 'Hoy' : 'Today'} · ${formatDate(lang)} · ${lang === 'es' ? 'racha' : 'streak'} ${streak}d`
+            : (lang === 'es' ? 'Desde el Archivo' : 'From the Archive')}
+        </span>
+        <span className="font-nameplate text-[10px] tracking-widest uppercase text-sub">
+          {String(revelation.number).padStart(3, '0')} / {allRevelations.length}
+        </span>
       </div>
 
-      {/* Main Card: apilada en mobile, en poster (media | texto) desde lg */}
-      <div className="card-hell bg-hell-card border-hell hover-lift lg:flex lg:items-stretch lg:gap-10 lg:p-10 overflow-hidden relative pb-14"
-        style={{ boxShadow: '8px 12px 0 rgba(0,0,0,0.45)' }}
+      <p className="kicker mb-3">
+        {categoryName(revelation.category, lang)}
+      </p>
+
+      <h2
+        className="font-display font-black uppercase leading-[0.92] text-ink break-words text-balance"
+        style={{ fontSize: getHeadlineSize(word) }}
       >
-        {/* Media */}
-        <div className="lg:w-2/5 lg:flex-shrink-0">
-          <div className="relative bg-hell-meme rounded-none mb-6 lg:mb-0 aspect-[4/3] flex items-center justify-center overflow-hidden animate-fade-in" style={{ animationDelay: '0.3s' }}>
-            {loading ? (
-              <div className="flex flex-col items-center gap-2">
-                <div className="spinner" />
-                <p className="text-white/80 text-xs">
-                  {lang === 'es' ? 'Cargando GIF...' : 'Loading GIF...'}
-                </p>
-              </div>
-            ) : gifUrl ? (
-              <img
-                src={gifUrl}
-                alt={word}
-                className="w-full h-full object-contain animate-fade-in"
-                onError={() => setGifUrl(null)}
-              />
-            ) : (
-              <p className="font-semibold text-lg text-white tracking-wide">MEME</p>
-            )}
-          </div>
-        </div>
+        {word}
+      </h2>
+      <p className="font-nameplate text-[11px] tracking-widest uppercase text-sub mt-1 mb-4">
+        {lang === 'es' ? 'sustantivo' : 'noun'}
+      </p>
 
-        {/* Texto */}
-        <div className="min-w-0 lg:flex-1 lg:flex lg:flex-col lg:justify-center">
-          <div className="mb-2">
-            <h2 className={`${getTitleSizeClass(word)} font-semibold text-hell-orange mb-2 break-words animate-slide-up-fade`}>
-              {word}
-            </h2>
-            <div className="h-1 bg-hell-gold-soft w-32 rounded-full animate-slide-up-fade" style={{ animationDelay: '0.1s' }} />
-          </div>
+      <hr className="border-ink mb-6" />
 
-          <div className="mb-2 animate-fade-in" style={{ animationDelay: '0.2s' }}>
-            <p className="text-hell-gold text-base leading-relaxed">
-              {bierce}
-            </p>
-            <p className="text-hell-text-secondary text-sm mt-3 font-light">
-              -Ambrose Bierce
-            </p>
-          </div>
-        </div>
+      <p className="font-serif italic text-[17px] leading-relaxed text-ink max-w-[60ch] lg:max-w-none mb-6">
+        "{bierce}"
+      </p>
 
-        {/* Guardar / Compartir — solo íconos, esquina inferior derecha */}
-        <div className="absolute bottom-4 right-4 flex items-center gap-4">
-          <button
-            onClick={onFavorite}
-            aria-label={lang === 'es' ? 'Guardar' : 'Save'}
-            className="text-2xl hover-scale active:scale-95 transition-smooth"
-          >
-            {isFavorite ? '❤️' : '🤍'}
-          </button>
-          <button
-            onClick={onShare}
-            aria-label={lang === 'es' ? 'Compartir' : 'Share'}
-            className="text-2xl hover-scale active:scale-95 transition-smooth"
-          >
-            🔗
-          </button>
-        </div>
+      <div
+        className="gif-band aspect-video mb-6"
+        style={{
+          backgroundImage: gifUrl
+            ? undefined
+            : 'radial-gradient(circle at 22% 32%, rgba(20,19,17,.06) 0 2px, transparent 2px), radial-gradient(circle at 62% 68%, rgba(20,19,17,.06) 0 2px, transparent 2px)',
+          backgroundSize: '9px 9px',
+        }}
+      >
+        {gifUrl ? (
+          <img
+            src={gifUrl}
+            alt={word}
+            className="w-full h-full object-contain"
+            onError={() => setGifUrl(null)}
+          />
+        ) : (
+          <span className="font-nameplate text-[10px] tracking-[.2em] uppercase text-sub">
+            {loading
+              ? (lang === 'es' ? 'CARGANDO GIF…' : 'LOADING GIF…')
+              : 'GIF — ' + (lang === 'es' ? 'INTERRUPCIÓN VISUAL' : 'VISUAL INTERRUPTION')}
+          </span>
+        )}
       </div>
 
-      {/* Revelation Section */}
-      <div className="mt-8 px-4 lg:px-0 flex flex-col items-center text-center animate-slide-up-fade" style={{ animationDelay: '0.4s' }}>
-        <div className="flex items-center gap-3 mb-4">
-          <img src={flame} alt="" className="h-6 w-[18px]" />
-          <h3 className="text-base lg:text-xl font-semibold text-hell-gold">
-            {lang === 'es' ? 'La verdad incómoda' : 'The uncomfortable truth'}
-          </h3>
-        </div>
-        <p className="text-hell-gold text-base lg:text-lg leading-relaxed max-w-md">
-          {revelationText}
-        </p>
+      <p className="font-serif text-[16px] leading-relaxed text-ink max-w-[52ch] lg:max-w-none mb-8">
+        {revelationText}
+      </p>
+
+      <div className="flex items-center gap-5 border-t border-ink pt-5">
+        <button
+          onClick={onFavorite}
+          aria-pressed={!!isFavorite}
+          className="byline-link"
+        >
+          {isFavorite ? (lang === 'es' ? 'Guardado' : 'Saved') : (lang === 'es' ? 'Guardar' : 'Save')}
+        </button>
+        <button onClick={onShare} className="byline-link">
+          {lang === 'es' ? 'Compartir' : 'Share'}
+        </button>
       </div>
-    </div>
+    </article>
   );
 };

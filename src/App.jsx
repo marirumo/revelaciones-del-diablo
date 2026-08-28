@@ -7,7 +7,7 @@ export default function App() {
   usePWA();
 
   return (
-    <div className="w-full h-full bg-hell-bg">
+    <div className="w-full h-full bg-paper">
       <AppRouter />
     </div>
   );

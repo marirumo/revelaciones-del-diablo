@@ -1,8 +1,7 @@
 import { useState, useMemo } from 'react';
-import { TopNav } from '../components/TopNav';
 import { allRevelations, categories, categoryName } from '../data/revelations';
 
-export const LibraryScreen = ({ lang = 'es', onNavigate, onSelectRevelation, onLanguageChange, dayIndex = 0 }) => {
+export const LibraryScreen = ({ lang = 'es', onSelectRevelation, dayIndex = 0 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const isSearching = searchQuery.trim().length > 0;
@@ -13,23 +12,23 @@ export const LibraryScreen = ({ lang = 'es', onNavigate, onSelectRevelation, onL
 
     // Buscar es intencional (el usuario ya sabe qué palabra quiere) — ahí sí
     // vale todo el diccionario. Pero navegar sin buscar es descubrir "lo que
-    // hay", y eso compite directo con el desbloqueo diario de Home: se limita
+    // hay", y eso compite directo con el desbloqueo diario de Hoy: se limita
     // a lo ya revelado desde la primera visita.
     if (!isSearching) {
       result = result.filter(r => r.unlockDay <= dayIndex);
     }
 
-    // Filter by category
     if (selectedCategory !== 'all') {
       result = result.filter(r => r.category === selectedCategory);
     }
 
-    // Filter by search
     if (isSearching) {
-      const query = searchQuery.toLowerCase();
+      const query = searchQuery
+        .toLowerCase()
+        .normalize('NFD').replace(/[\u0300-\u036f]/g, '');
       result = result.filter(r => {
-        const wordES = r.wordES.toLowerCase();
-        const wordEN = r.wordEN.toLowerCase();
+        const wordES = r.wordES.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+        const wordEN = r.wordEN.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
         return wordES.includes(query) || wordEN.includes(query);
       });
     } else {
@@ -41,105 +40,91 @@ export const LibraryScreen = ({ lang = 'es', onNavigate, onSelectRevelation, onL
 
   const handleRevelationClick = (revelation) => {
     onSelectRevelation(revelation);
-    onNavigate('home');
   };
 
   return (
-    <div className="w-full min-h-screen bg-hell-bg">
-      <TopNav
-        title={lang === 'es' ? 'Biblioteca' : 'Library'}
-        rightText={isSearching ? allRevelations.length : `${unlockedCount} / ${allRevelations.length}`}
-        onBack={() => onNavigate('home')}
-        lang={lang}
-        onLanguageChange={onLanguageChange}
-      />
+    <div className="w-full min-h-screen bg-paper pb-20 pt-28">
+      <div className="max-w-5xl mx-auto px-4 lg:px-8">
+        <div className="flex items-baseline justify-between border-t-[3px] border-b border-ink pt-5 pb-4 mb-8">
+          <h1 className="font-nameplate font-semibold text-xl tracking-tight uppercase text-ink">
+            {lang === 'es' ? 'El Archivo' : 'The Archive'}
+          </h1>
+          <span className="font-nameplate text-[11px] text-sub tracking-wider">
+            {isSearching ? allRevelations.length : `${unlockedCount} / ${allRevelations.length}`}
+          </span>
+        </div>
 
-      <div className="max-w-md lg:max-w-5xl mx-auto px-4 lg:px-8 pt-20 pb-6">
-        {/* Search */}
-        <div className="mb-6">
+        {/* Search — un renglón subrayado, no una barra flotante */}
+        <div className="mb-5">
+          <label htmlFor="archive-search" className="sr-only">
+            {lang === 'es' ? 'Buscar revelación' : 'Search revelation'}
+          </label>
           <input
+            id="archive-search"
             type="text"
-            placeholder={lang === 'es' ? '🔍 Buscar revelación...' : '🔍 Search revelation...'}
+            placeholder={lang === 'es' ? 'Buscar una palabra…' : 'Search a word…'}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-hell-card border border-hell rounded-lg px-4 py-3 text-hell-gold placeholder-hell-text-secondary focus:outline-none focus:border-hell-orange focus:ring-1 focus:ring-hell-orange"
+            className="w-full bg-transparent border-b-2 border-ink px-1 py-2.5 font-serif italic text-ink placeholder-sub focus:outline-none focus:border-accent"
           />
         </div>
 
-        {/* Category Filters */}
-        <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
+        {/* Sections — palabras planas, la activa subrayada en acento */}
+        <div className="flex flex-wrap gap-x-4 gap-y-2 mb-6 border-b border-ink/15 pb-4">
           <button
             onClick={() => setSelectedCategory('all')}
-            className={`px-3 py-2 rounded-lg whitespace-nowrap font-bold transition-smooth text-sm ${
-              selectedCategory === 'all'
-                ? 'border-2 border-hell-orange text-hell-orange'
-                : 'border border-hell-text-muted text-hell-text-secondary'
+            className={`font-nameplate text-[11px] tracking-widest uppercase min-h-11 border-b transition-smooth ${
+              selectedCategory === 'all' ? 'text-ink font-semibold border-accent' : 'text-sub border-transparent hover:text-ink'
             }`}
           >
             {lang === 'es' ? 'Todas' : 'All'}
           </button>
-
-          {categories.slice(0, 3).map(cat => (
+          {categories.map(cat => (
             <button
               key={cat.id}
               onClick={() => setSelectedCategory(cat.id)}
-              className={`px-3 py-2 rounded-lg whitespace-nowrap font-bold transition-smooth text-sm ${
-                selectedCategory === cat.id
-                  ? 'border-2 border-hell-orange text-hell-orange'
-                  : 'border border-hell-text-muted text-hell-text-secondary'
+              className={`font-nameplate text-[11px] tracking-widest uppercase min-h-11 border-b transition-smooth ${
+                selectedCategory === cat.id ? 'text-ink font-semibold border-accent' : 'text-sub border-transparent hover:text-ink'
               }`}
             >
-              {cat.emoji} {lang === 'es' ? cat.name : cat.nameEN}
+              {lang === 'es' ? cat.name : cat.nameEN}
             </button>
           ))}
-
-          <button
-            onClick={() => onNavigate('categories')}
-            className="px-3 py-2 rounded-lg whitespace-nowrap font-bold transition-smooth text-sm border border-hell-text-muted text-hell-text-secondary hover:border-hell-orange"
-          >
-            {lang === 'es' ? '+ Más' : '+ More'}
-          </button>
         </div>
 
-        {/* Aviso: en modo "explorar" (sin búsqueda) solo se ve lo ya desbloqueado */}
         {!isSearching && unlockedCount < allRevelations.length && (
-          <p className="text-xs text-hell-text-muted mb-4">
-            🔒 {allRevelations.length - unlockedCount} {lang === 'es'
-              ? 'más por descubrir — o búscalas por nombre arriba'
-              : 'more to discover — or search for them by name above'}
+          <p className="font-nameplate text-[11px] text-sub mb-4">
+            {allRevelations.length - unlockedCount} {lang === 'es'
+              ? 'todavía sin publicar — o búscalas por nombre arriba'
+              : 'not yet in print — or search for them by name above'}
           </p>
         )}
 
-        {/* Results */}
         {filteredRevelations.length === 0 ? (
-          <div className="text-center py-12">
-            <p className="text-hell-text-secondary">
-              {isSearching
-                ? (lang === 'es' ? 'No se encontraron revelaciones' : 'No revelations found')
-                : (lang === 'es' ? 'Todavía no desbloqueas ninguna. Vuelve mañana o búscala por nombre.' : "You haven't unlocked any yet. Come back tomorrow or search for one by name.")}
-            </p>
-          </div>
+          <p className="font-serif italic text-sub py-12 text-center">
+            {isSearching
+              ? (lang === 'es' ? 'No se encontraron revelaciones.' : 'No revelations found.')
+              : (lang === 'es' ? 'Todavía no desbloqueas ninguna. Vuelve mañana o búscala por nombre.' : "You haven't unlocked any yet. Come back tomorrow or search for one by name.")}
+          </p>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+          <div>
             {filteredRevelations.map((revelation) => (
               <button
                 key={revelation.id}
                 onClick={() => handleRevelationClick(revelation)}
-                className="card-hell bg-hell-card/90 border-hell text-left hover:border-hell-orange transition-smooth p-4"
+                className="index-row group"
               >
-                <div className="flex justify-between items-start">
-                  <div>
-                    <p className="text-xs text-hell-orange font-bold mb-2">
-                      #{revelation.number}
-                    </p>
-                    <h3 className="text-xl text-hell-gold-soft font-bold">
-                      {lang === 'es' ? revelation.wordES : revelation.wordEN}
-                    </h3>
-                  </div>
-                  <span className="text-xs text-hell-text-secondary">
-                    {categoryName(revelation.category, lang)}
+                <span className="font-nameplate text-[11px] text-sub w-10 flex-none">
+                  {String(revelation.number).padStart(3, '0')}
+                </span>
+                <span className="flex-1 min-w-0">
+                  <span className="font-serif font-bold text-lg text-ink group-hover:text-accent transition-smooth block truncate">
+                    {lang === 'es' ? revelation.wordES : revelation.wordEN}
                   </span>
-                </div>
+                </span>
+                <span className="font-nameplate text-[9.5px] tracking-widest uppercase text-sub flex-none">
+                  {categoryName(revelation.category, lang)}
+                </span>
               </button>
             ))}
           </div>

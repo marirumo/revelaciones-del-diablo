@@ -126,9 +126,294 @@ Una aplicación web y PWA que entrega una revelación satírica diaria inspirada
 
 ---
 
+---
+
+## 🧭 Evolución de Producto y Experiencia
+
+### Principio de Producto
+
+**Revelaciones del Diablo no debe sentirse como una app que contiene 365 frases.**
+
+Debe sentirse como un **ritual diario + archivo personal de cinismo**.
+
+La experiencia se organiza alrededor de tres comportamientos principales:
+
+1. **Today** — volver cada día por una nueva revelación.
+2. **Archive** — explorar y descubrir las 365 revelaciones.
+3. **My Cynicism** — construir una colección personal de verdades incómodas.
+
+La interfaz debe hacer que el contenido parezca un objeto editorial y cultural, no un registro dentro de un dashboard.
+
+### Nueva arquitectura conceptual
+
+| Concepto actual | Concepto de producto |
+|---|---|
+| Home / Revelación del Día | **Today** — ritual diario |
+| Library | **Archive** — archivo de 365 revelaciones |
+| Favorites | **My Cynicism** — colección personal |
+| Categories | **Subjects** — temas sobre los que somos cínicos |
+| Stats | **Mirror** — qué revela tu colección sobre ti |
+| Share | **Publish this truth** — convertir una revelación en un objeto social |
+
+Los nombres pueden adaptarse al idioma activo (ES/EN), pero la metáfora de producto debe mantenerse.
+
+### 1. Today — Ritual diario
+
+La pantalla principal debe crear una sensación de llegada:
+
+> **I came here today.**
+
+Además de mostrar la revelación del día, debe comunicar sutilmente continuidad y hábito.
+
+Posibles elementos:
+
+- "Revelación de hoy"
+- progreso anual 01–365
+- navegación hacia ayer/mañana
+- racha de lectura
+- indicación discreta de que la revelación ya fue vista
+- acceso rápido a guardar y compartir
+
+No convertirlo en un sistema de gamificación agresivo.
+
+### 2. Surprise Me — Descubrimiento aleatorio
+
+Añadir una acción de descubrimiento aleatorio.
+
+**Objetivo:** transformar las 365 revelaciones en un corpus explorable y no únicamente en contenido asociado a una fecha.
+
+Características:
+
+- seleccionar una revelación aleatoria
+- evitar repetir inmediatamente la misma
+- permitir guardar/compartir desde el resultado
+- opcionalmente mostrar una pequeña etiqueta "Random revelation"
+
+Debe ser una acción secundaria, no competir con la revelación diaria.
+
+### 3. Archive — El archivo de 365
+
+La Library deja de concebirse como una base de datos y pasa a ser un **archivo editorial**.
+
+Debe conservar:
+
+- búsqueda instantánea
+- filtrado por categorías
+- ordenamiento
+- contador N/365
+- previews
+- caracteres acentuados
+- búsqueda case-insensitive
+
+Además, explorar:
+
+- índice alfabético
+- índice numérico 01–365
+- navegación por categorías
+- descubrimiento serendípico
+- "Surprise Me"
+
+La presentación no debe utilizar una cuadrícula genérica de tarjetas.
+
+### 4. My Cynicism — Colección personal
+
+Las favoritas pasan a ser una colección personal.
+
+El objetivo emocional es que el usuario sienta:
+
+> "This is my collection of uncomfortable truths."
+
+o, en español:
+
+> "Mi colección de verdades incómodas."
+
+Además de guardar/eliminar/ordenar/sincronizar, considerar:
+
+- fecha en que se guardó
+- categoría
+- número total
+- colecciones futuras
+- filtros
+- búsqueda dentro de guardadas
+
+Mantener el funcionamiento offline-first y la sincronización cloud definidos en el PRD.
+
+### 5. Mirror — Estadísticas como autorreflexión
+
+Las estadísticas no deben parecer analytics de producto.
+
+Deben funcionar como un **espejo del usuario**.
+
+Además de las métricas existentes, explorar:
+
+- categoría dominante
+- proporción de revelaciones guardadas por categoría
+- evolución de la colección
+- racha
+- temas recurrentes
+- última revelación guardada
+- frases o categorías más frecuentes
+
+Cuando sea posible, convertir los datos en observaciones interpretables.
+
+Ejemplo conceptual:
+
+> **You seem particularly skeptical about Money.**  
+> 38% of your saved revelations concern money, power and success.
+
+Las interpretaciones deben ser ligeras, transparentes y no presentarse como diagnósticos psicológicos.
+
+### 6. Publish this truth — Compartir como producto
+
+Compartir debe ser tratado como una funcionalidad central de crecimiento, no como un botón auxiliar.
+
+Cada revelación debe poder convertirse en un **social artifact** visualmente atractivo que incluya:
+
+- palabra
+- definición
+- fragmento de reflexión
+- branding discreto
+- URL de la revelación
+
+El resultado debe estar diseñado para funcionar bien en:
+
+- WhatsApp
+- Instagram
+- X
+- otras plataformas sociales
+- copia/enlace directo
+
+La composición visual compartida debe ser suficientemente distintiva como para que el producto sea reconocible incluso sin abrir la aplicación.
+
+### 7. The Devil's Index
+
+Explorar una experiencia visual adicional basada en el índice completo de las 365 revelaciones.
+
+Concepto:
+
+**The Devil's Index / El Índice del Diablo**
+
+Puede funcionar como una representación navegable del corpus:
+
+- 01–365
+- palabras
+- categorías
+- navegación alfabética
+- navegación numérica
+- búsqueda
+
+No debe convertirse en un dashboard. Debe sentirse como una pieza editorial interactiva.
+
+### 8. Rol del GIF
+
+El GIF continúa siendo parte de cada revelación, pero su función debe ser la de **contrapunto visual irónico**.
+
+No debe dominar automáticamente la composición.
+
+Explorar:
+
+- crops
+- formatos no convencionales
+- tamaños variables
+- imágenes parcialmente visibles
+- interacción entre imagen y tipografía
+
+El contenido escrito sigue siendo el elemento principal.
+
+---
+
+## 🎨 Estrategia de Diseño — Gate antes de diseñar las pantallas
+
+### Objetivo
+
+Evitar caer en una interpretación incremental del mockup existente.
+
+### Dirección — Editorial Brutalist
+
+Características potenciales:
+
+- tipografía dominante
+- composición asimétrica
+- reglas y líneas
+- grandes números
+- contraste fuerte
+- sensación de publicación contemporánea
+- mínima decoración
+
+
+### Reglas
+
+No debe de:
+
+- reproducir el mockup existente
+- utilizar un dashboard SaaS convencional
+- depender de cards genéricas
+- usar glassmorphism
+- utilizar gradientes como recurso principal
+- utilizar sidebar + topbar + card grid como composición predeterminada
+- parecer una plantilla de UI
+- sacrificar legibilidad por estética
+
+---
+
+## 🔄 Orden recomendado de diseño
+
+Diseñar primero:
+
+1. Today
+2. Revelation detail
+3. Share artifact
+
+Estas tres experiencias definen la identidad del producto.
+
+### Phase 4 — Discovery
+Diseñar:
+
+4. Archive
+5. Subjects
+6. The Devil's Index
+7. Surprise Me
+
+### Phase 5 — Personal Layer
+Diseñar:
+
+8. My Cynicism
+9. Mirror
+10. Account/Auth
+
+### Phase 6 — System
+Definir:
+
+- typography
+- colors
+- spacing
+- buttons
+- icons
+- states
+- motion
+- responsive behavior
+- accessibility
+
+### Phase 7 — Edge Cases
+Diseñar:
+
+- loading
+- empty states
+- offline
+- sync
+- errors
+- authentication
+- no results
+- GIF failure
+
+**No construir todas las pantallas antes de validar la dirección de arte.**
+
+---
+
+
 ## ⭐ Funcionalidades Principales
 
-### 1. **Revelación del Día** (Home Screen)
+### 1. **Today — Revelación del Día** (Home Screen)
 **Descripción:** Mostrar una revelación diaria única basada en el calendario
 
 **Características:**
@@ -147,7 +432,7 @@ Una aplicación web y PWA que entrega una revelación satírica diaria inspirada
 - GIF fallo: mostrar 5 fallbacks locales
 - Responsive: móvil + desktop
 
-### 2. **Biblioteca Completa** (Library Screen)
+### 2. **Archive — Biblioteca Completa** (Library Screen)
 **Descripción:** Búsqueda y filtrado de 365 revelaciones
 
 **Características:**
@@ -181,7 +466,7 @@ Una aplicación web y PWA que entrega una revelación satírica diaria inspirada
 - Contador de revelaciones por categoría
 - Ordenamiento flexible (Nuevas/Alfabético)
 
-### 4. **Guardadas (Favoritas)** (Favorites Screen)
+### 4. **My Cynicism — Guardadas (Favoritas)** (Favorites Screen)
 **Descripción:** Colección personalizada de revelaciones
 
 **Características:**
@@ -198,7 +483,7 @@ Una aplicación web y PWA que entrega una revelación satírica diaria inspirada
 - Sync automático si hay usuario
 - Funcionar offline
 
-### 5. **Estadísticas** (Stats Screen)
+### 5. **Mirror — Estadísticas** (Stats Screen)
 **Descripción:** Analítica de uso del usuario
 
 **Métricas:**
@@ -253,8 +538,8 @@ Una aplicación web y PWA que entrega una revelación satírica diaria inspirada
 **Descripción:** Soporte ES/EN en toda la app
 
 **Idiomas:**
-- **Español** (default) 🇲🇽
-- **English** (toggle) 🇺🇸
+- **Español** (toggle) 🇲🇽
+- **English** (default) 🇺🇸
 
 **Elementos a traducir:**
 - Todas las revelaciones (ES/EN)
@@ -285,7 +570,7 @@ Una aplicación web y PWA que entrega una revelación satírica diaria inspirada
 - <2s cargar favoritas offline
 - Actualizaciones silenciosas
 
-### 10. **Compartir** (Share Features)
+### 10. **Publish this truth — Compartir** (Share Features)
 **Descripción:** Compartir revelaciones en redes sociales
 
 **Métodos:**

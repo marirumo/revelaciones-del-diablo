@@ -3,6 +3,41 @@
 @import 'tailwindcss';
 @config '../../tailwind.config.js';
 
+/* ============================================================
+ * THE DEVIL'S NEWSPAPER — official art direction.
+ * Self-hosted faces: Playfair Display (headline word + reflection +
+ * quoted definition), Oswald (nameplate, dateline, every system
+ * label). No monospace anywhere in this direction.
+ * ============================================================ */
+@font-face {
+  font-family: 'Playfair Display';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/playfair400.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Playfair Display';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/playfair400i.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Playfair Display';
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+  src: url('/fonts/playfair900.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Oswald';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/oswald600.woff2') format('woff2');
+}
+
 /*
  * Tailwind v4 pone todas sus utilidades dentro de @layer (theme, base,
  * components, utilities). El CSS sin @layer siempre gana el cascade sobre
@@ -20,9 +55,9 @@
   html, body {
     width: 100%;
     height: 100%;
-    background: #201e45;
-    color: #f5f5f5;
-    font-family: 'Pridi', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #F7F5EE;
+    color: #141311;
+    font-family: 'Oswald', 'Arial Narrow', sans-serif;
     overflow-x: hidden;
   }
 
@@ -31,24 +66,12 @@
     min-height: 100vh;
   }
 
-  /* Subtle background pattern */
-  body::before {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-image:
-      radial-gradient(circle at 100px 150px, rgba(0, 185, 197, 0.06) 0%, transparent 40%),
-      radial-gradient(circle at 280px 400px, rgba(255, 65, 102, 0.05) 0%, transparent 40%),
-      radial-gradient(circle at 150px 700px, rgba(105, 17, 52, 0.08) 0%, transparent 40%);
-    background-attachment: fixed;
-    pointer-events: none;
-    z-index: -1;
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
   }
 
-  /* Scrollbar styling */
   ::-webkit-scrollbar {
     width: 6px;
   }
@@ -58,46 +81,61 @@
   }
 
   ::-webkit-scrollbar-thumb {
-    background: #ff4166;
-    border-radius: 3px;
+    background: #141311;
   }
 
-  ::-webkit-scrollbar-thumb:hover {
-    background: #fd6b33;
+  :focus-visible {
+    outline: 3px solid #C4301B;
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+      scroll-behavior: auto !important;
+    }
   }
 }
 
-/* Smooth transitions */
+/* ============================================================
+ * Newspaper components — flat, rule-driven. No shadows, no
+ * gradients, no glass, no rounded pills, no rotation, no stamps.
+ * Hierarchy comes from rules, tracked caps and the single accent.
+ * ============================================================ */
 @layer components {
   .transition-smooth {
     @apply transition-all duration-200 ease-in-out;
   }
 
-  .btn-hell {
-    @apply px-4 py-3 rounded-lg font-bold transition-all duration-200 ease-in-out border-2;
+  /* Kicker — the only place category color appears as text */
+  .kicker {
+    @apply font-nameplate font-semibold text-[10.5px] tracking-[.16em] uppercase text-accent;
   }
 
-  .btn-hell-primary {
-    @apply px-4 py-3 rounded-lg font-bold transition-all duration-200 ease-in-out border-2 border-hell-gold text-hell-gold hover:bg-hell-gold/10;
+  /* Plain text action — Save/Share/back-links, accent underline only */
+  .byline-link {
+    @apply font-nameplate text-[11px] tracking-wider uppercase text-ink border-b border-accent pb-0.5 min-h-11 inline-flex items-center transition-all duration-200 ease-in-out;
+  }
+  .byline-link:hover {
+    @apply text-accent;
+  }
+  .byline-link[aria-pressed="true"] {
+    @apply text-accent border-ink;
   }
 
-  .btn-hell-secondary {
-    @apply px-4 py-3 rounded-lg font-bold transition-all duration-200 ease-in-out border-2 border-hell-orange text-hell-orange hover:bg-hell-orange/10;
+  /* GIF band — a bordered interruption in the column, never a hero card */
+  .gif-band {
+    @apply w-full border-y border-ink flex items-center justify-center overflow-hidden bg-ink/[0.04];
   }
 
-  .card-hell {
-    @apply bg-hell-card border border-hell rounded-xl p-4 transition-all duration-200 ease-in-out;
+  /* List row — Archive / Index / Subjects / My Cynicism. A hairline
+     rule under text, never a card, never a shadow. */
+  .index-row {
+    @apply w-full flex items-center gap-3 py-3 border-b border-ink/15 text-left transition-all duration-200 ease-in-out min-h-11;
   }
-
-  .card-hell:hover {
-    @apply border-hell-orange;
-  }
-
-  .title-hell {
-    @apply text-center font-black;
-  }
-
-  .revelation-text {
-    @apply text-hell-gold-soft font-medium leading-relaxed;
+  .index-row:hover {
+    @apply border-ink bg-ink/[0.03];
   }
 }

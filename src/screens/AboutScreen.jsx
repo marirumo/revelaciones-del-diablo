@@ -1,92 +1,77 @@
-import { TopNav } from '../components/TopNav';
-
-export const AboutScreen = ({ lang = 'es', onNavigate, onLanguageChange }) => {
+export const AboutScreen = ({ lang = 'es' }) => {
   return (
-    <div className="w-full min-h-screen bg-hell-bg">
-      <TopNav
-        title={lang === 'es' ? 'Acerca de' : 'About'}
-        onBack={() => onNavigate('home')}
-        lang={lang}
-        onLanguageChange={onLanguageChange}
-      />
+    <div className="w-full min-h-screen bg-paper pb-20 pt-28">
+      <div className="max-w-5xl mx-auto px-4 lg:px-8">
+        <div className="border-t-[3px] border-ink pt-5">
+          <p className="kicker mb-3">{lang === 'es' ? 'Colofón' : 'Colophon'}</p>
 
-      <div className="max-w-md lg:max-w-2xl mx-auto px-4 lg:px-8 pt-20 pb-10">
-        {/* Hero */}
-        <div className="text-center mb-12">
-          <div className="text-6xl mb-4">😈</div>
-          <h1 className="text-4xl font-black text-hell-gold mb-2">
-            Revelaciones
-          </h1>
-          <p className="text-hell-orange mb-2">
-            {lang === 'es' ? 'del Diablo' : 'of the Devil'}
-          </p>
-          <p className="text-xs text-hell-text-muted">v1.0.0</p>
-        </div>
-
-        {/* Description */}
-        <div className="card-hell bg-hell-card/90 border-hell mb-6 p-6">
-          <h2 className="text-hell-gold font-bold mb-3">
-            {lang === 'es' ? '¿Qué es esto?' : 'What is this?'}
-          </h2>
-          <p className="text-sm text-hell-gold-soft leading-relaxed">
-            {lang === 'es'
-              ? 'Una app diaria de revelaciones satíricas inspiradas en el Diccionario del Diablo de Ambrose Bierce. Diseñada para que reflexiones sobre la naturaleza incómoda de la realidad, con una sonrisa.'
-              : "A daily app of satirical revelations inspired by Ambrose Bierce's Devil's Dictionary. Built to make you reflect on the uncomfortable nature of reality, with a smile."}
-          </p>
-        </div>
-
-        {/* Bierce */}
-        <div className="card-hell bg-hell-card/90 border-hell mb-6 p-6">
-          <h2 className="text-hell-gold font-bold mb-3">
-            {lang === 'es' ? 'Sobre Bierce' : 'About Bierce'}
-          </h2>
-          <p className="text-sm text-hell-gold-soft leading-relaxed">
-            {lang === 'es'
-              ? 'Ambrose Gwinnett Bierce (1842-1914) fue un escritor, periodista y satírico estadounidense conocido por su sarcasmo cáustico y su genial Diccionario del Diablo (1881), una colección de más de 1000 definiciones satíricas.'
-              : "Ambrose Gwinnett Bierce (1842-1914) was an American writer, journalist and satirist known for his caustic sarcasm and his brilliant Devil's Dictionary (1881), a collection of over 1000 satirical definitions."}
-          </p>
-        </div>
-
-        {/* Credits */}
-        <div className="mb-6">
-          <h2 className="text-hell-gold font-bold mb-3">
-            {lang === 'es' ? 'Créditos' : 'Credits'}
-          </h2>
-          <div className="space-y-3">
-            <div className="card-hell bg-hell-card/90 border-hell p-4">
-              <p className="text-hell-gold-soft font-bold text-sm">
-                {lang === 'es' ? 'Diseño & Desarrollo' : 'Design & Development'}
-              </p>
-              <p className="text-hell-text-secondary text-xs">
-                {lang === 'es' ? 'En colaboración con Claude (Anthropic)' : 'Built in collaboration with Claude (Anthropic)'}
-              </p>
-            </div>
-
-            <div className="card-hell bg-hell-card/90 border-hell p-4">
-              <p className="text-hell-gold-soft font-bold text-sm">GIFs</p>
-              <p className="text-hell-text-secondary text-xs">Powered by Giphy</p>
-            </div>
-
-            <div className="card-hell bg-hell-card/90 border-hell p-4">
-              <p className="text-hell-gold-soft font-bold text-sm">
-                {lang === 'es' ? 'Fuentes' : 'Fonts'}
-              </p>
-              <p className="text-hell-text-secondary text-xs">System Font Stack</p>
-            </div>
+          <div className="flex items-baseline justify-between border-b border-ink pb-4 mb-8">
+            <h1 className="font-display font-black uppercase text-4xl text-ink leading-none">
+              Revelaciones
+            </h1>
+            <span className="font-nameplate text-[11px] text-sub tracking-wider">v1.0.0</span>
           </div>
         </div>
 
-        {/* Footer */}
-        <div className="text-center mb-6">
-          <p className="text-xs text-hell-text-secondary">
-            {lang === 'es' ? 'Hecho con 🔥 en la Ciudad de México' : 'Made with 🔥 in Mexico City'}
-          </p>
-        </div>
+        <p className="font-serif italic text-lg text-sub mb-8">
+          {lang === 'es' ? 'del Diablo' : 'of the Devil'}
+        </p>
 
-        {/* Link */}
-        <button className="w-full btn-hell-primary">
-          ↗ {lang === 'es' ? 'Visita el Diccionario Original' : 'Visit the Original Dictionary'}
-        </button>
+        <div className="max-w-2xl">
+        <section className="border-t border-ink pt-4 mb-6">
+          <h2 className="font-nameplate font-semibold text-[11px] tracking-widest uppercase text-sub mb-2">
+            {lang === 'es' ? '¿Qué es esto?' : 'What is this?'}
+          </h2>
+          <p className="font-serif text-[15.5px] leading-relaxed text-ink">
+            {lang === 'es'
+              ? 'Una revelación satírica diaria inspirada en el Diccionario del Diablo de Ambrose Bierce. Cada edición numerada trae una palabra, una definición cínica y una reflexión incómoda sobre la realidad.'
+              : "A daily satirical revelation inspired by Ambrose Bierce's Devil's Dictionary. Every numbered edition carries a word, a cynical definition, and an uncomfortable reflection on reality."}
+          </p>
+        </section>
+
+        <section className="border-t border-ink/15 pt-4 mb-6">
+          <h2 className="font-nameplate font-semibold text-[11px] tracking-widest uppercase text-sub mb-2">
+            {lang === 'es' ? 'Sobre Bierce' : 'About Bierce'}
+          </h2>
+          <p className="font-serif text-[15.5px] leading-relaxed text-ink">
+            {lang === 'es'
+              ? 'Ambrose Gwinnett Bierce (1842–1914) fue un escritor, periodista y satírico estadounidense conocido por su sarcasmo cáustico y su Diccionario del Diablo (1881), una colección de más de mil definiciones satíricas.'
+              : "Ambrose Gwinnett Bierce (1842–1914) was an American writer, journalist and satirist known for his caustic sarcasm and his Devil's Dictionary (1881), a collection of over a thousand satirical definitions."}
+          </p>
+        </section>
+
+        <section className="border-t border-ink/15 pt-4 mb-6">
+          <h2 className="font-nameplate font-semibold text-[11px] tracking-widest uppercase text-sub mb-3">
+            {lang === 'es' ? 'Créditos' : 'Credits'}
+          </h2>
+          <dl className="space-y-2">
+            <div className="flex items-baseline justify-between gap-3 border-b border-ink/15 pb-2">
+              <dt className="font-nameplate text-[11px] uppercase text-sub">
+                {lang === 'es' ? 'Diseño & desarrollo' : 'Design & development'}
+              </dt>
+              <dd className="font-serif italic text-sm text-ink text-right">
+                {lang === 'es' ? 'Con Claude (Anthropic)' : 'Built with Claude (Anthropic)'}
+              </dd>
+            </div>
+            <div className="flex items-baseline justify-between gap-3 border-b border-ink/15 pb-2">
+              <dt className="font-nameplate text-[11px] uppercase text-sub">GIFs</dt>
+              <dd className="font-serif italic text-sm text-ink">Giphy</dd>
+            </div>
+            <div className="flex items-baseline justify-between gap-3">
+              <dt className="font-nameplate text-[11px] uppercase text-sub">
+                {lang === 'es' ? 'Tipografía' : 'Typefaces'}
+              </dt>
+              <dd className="font-serif italic text-sm text-ink text-right">
+                Playfair Display · Oswald
+              </dd>
+            </div>
+          </dl>
+        </section>
+
+        <p className="font-nameplate text-[11px] text-sub border-t border-ink pt-4">
+          {lang === 'es' ? 'Hecho en la Ciudad de México' : 'Made in Mexico City'}
+        </p>
+        </div>
       </div>
     </div>
   );

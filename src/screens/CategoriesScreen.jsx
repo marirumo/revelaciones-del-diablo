@@ -1,35 +1,45 @@
-import { TopNav } from '../components/TopNav';
 import { categories } from '../data/revelations';
 
-export const CategoriesScreen = ({ lang = 'es', onNavigate, onSelectRevelation, onLanguageChange }) => {
+export const CategoriesScreen = ({ lang = 'es', onNavigate }) => {
   const handleCategoryClick = (categoryId) => {
     onNavigate('category-detail', { categoryId });
   };
 
   return (
-    <div className="w-full min-h-screen bg-hell-bg">
-      <TopNav
-        title={lang === 'es' ? 'Categorías' : 'Categories'}
-        onBack={() => onNavigate('home')}
-        lang={lang}
-        onLanguageChange={onLanguageChange}
-      />
+    <div className="w-full min-h-screen bg-paper pb-20 pt-28">
+      <div className="max-w-5xl mx-auto px-4 lg:px-8">
+        <div className="flex items-baseline justify-between border-t-[3px] border-b border-ink pt-5 pb-4 mb-5">
+          <h1 className="font-nameplate font-semibold text-xl tracking-tight uppercase text-ink">
+            {lang === 'es' ? 'Materias' : 'Subjects'}
+          </h1>
+          <span className="font-nameplate text-[11px] text-sub tracking-wider">
+            {categories.length} {lang === 'es' ? 'secciones' : 'sections'}
+          </span>
+        </div>
+        <p className="font-serif italic text-sub text-sm mb-8">
+          {lang === 'es'
+            ? 'Los temas sobre los que somos cínicos, no una paleta de colores.'
+            : "The subjects we're cynical about, not a color palette."}
+        </p>
 
-      <div className="max-w-md lg:max-w-4xl mx-auto px-4 lg:px-8 pt-20 pb-6">
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          {categories.map((category) => (
+        <div>
+          {categories.map((category, i) => (
             <button
               key={category.id}
               onClick={() => handleCategoryClick(category.id)}
-              className="card-hell bg-hell-card/90 border-hell hover:border-hell-orange transition-smooth p-6 aspect-square flex flex-col items-center justify-center"
+              className="index-row group items-baseline"
             >
-              <div className="text-4xl mb-3">{category.emoji}</div>
-              <h3 className="text-lg font-bold text-hell-gold-soft text-center mb-2">
-                {lang === 'es' ? category.name : category.nameEN}
-              </h3>
-              <p className="text-xs text-hell-text-secondary">
-                {category.count} {lang === 'es' ? 'revelaciones' : 'revelations'}
-              </p>
+              <span className="font-nameplate text-[11px] text-sub w-8 flex-none">
+                {String(i + 1).padStart(2, '0')}
+              </span>
+              <span className="flex-1 min-w-0">
+                <span className="font-display font-black uppercase text-2xl text-ink group-hover:text-accent transition-smooth block truncate">
+                  {lang === 'es' ? category.name : category.nameEN}
+                </span>
+              </span>
+              <span className="font-nameplate text-[10px] tracking-widest uppercase text-sub flex-none">
+                {category.count} {lang === 'es' ? 'notas' : 'stories'}
+              </span>
             </button>
           ))}
         </div>

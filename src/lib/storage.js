@@ -144,6 +144,15 @@ export const setLanguage = async (lang) => {
   return setPreference('language', lang);
 };
 
+// Pantalla de bienvenida: se muestra una sola vez por dispositivo.
+export const getHasSeenWelcome = async () => {
+  return !!(await getPreference('hasSeenWelcome'));
+};
+
+export const setHasSeenWelcome = async () => {
+  return setPreference('hasSeenWelcome', true);
+};
+
 // Días desde medianoche (fecha local) para contar "días completos" sin horas.
 const daysSinceEpoch = (date) => Math.floor(date.getTime() / 86400000);
 

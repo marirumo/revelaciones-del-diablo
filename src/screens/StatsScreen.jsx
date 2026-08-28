@@ -1,11 +1,20 @@
 import { useEffect, useState } from 'react';
-import { TopNav } from '../components/TopNav';
 import { getAllFavorites } from '../lib/storage';
 import { allRevelations } from '../data/revelations';
 
-export const StatsScreen = ({ lang = 'es', onNavigate, onLanguageChange, dayIndex = 0, streak = 1 }) => {
+const CATEGORY_LABELS = {
+  éxito: { es: 'Éxito', en: 'Success' },
+  amor: { es: 'Amor', en: 'Love' },
+  dinero: { es: 'Dinero', en: 'Money' },
+  poder: { es: 'Poder', en: 'Power' },
+  relaciones: { es: 'Relaciones', en: 'Relationships' },
+  filosofía: { es: 'Filosofía', en: 'Philosophy' },
+  política: { es: 'Política', en: 'Politics' },
+  sociedad: { es: 'Sociedad', en: 'Society' },
+};
+
+export const StatsScreen = ({ lang = 'es', onNavigate, dayIndex = 0, streak = 1 }) => {
   const unlockedCount = Math.min(dayIndex + 1, allRevelations.length);
-  const [favorites, setFavorites] = useState([]);
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState({
     totalFavorites: 0,
@@ -19,9 +28,7 @@ export const StatsScreen = ({ lang = 'es', onNavigate, onLanguageChange, dayInde
       try {
         setLoading(true);
         const fav = await getAllFavorites();
-        setFavorites(fav);
 
-        // Calcular estadísticas
         const categoryCount = {};
         let topCat = null;
         let maxCount = 0;
@@ -40,7 +47,7 @@ export const StatsScreen = ({ lang = 'es', onNavigate, onLanguageChange, dayInde
         setStats({
           totalFavorites: fav.length,
           topCategory: topCat,
-          lastSaved: lastFav ? new Date(lastFav.savedAt) : null,
+          lastSaved: lastFav || null,
           categoriesCount: categoryCount,
         });
       } catch (error) {
@@ -53,191 +60,94 @@ export const StatsScreen = ({ lang = 'es', onNavigate, onLanguageChange, dayInde
     loadStats();
   }, []);
 
-  const getCategoryLabel = (catId) => {
-    const labels = {
-      éxito: lang === 'es' ? 'Éxito' : 'Success',
-      amor: lang === 'es' ? 'Amor' : 'Love',
-      dinero: lang === 'es' ? 'Dinero' : 'Money',
-      poder: lang === 'es' ? 'Poder' : 'Power',
-      relaciones: lang === 'es' ? 'Relaciones' : 'Relationships',
-      filosofía: lang === 'es' ? 'Filosofía' : 'Philosophy',
-      política: lang === 'es' ? 'Política' : 'Politics',
-      sociedad: lang === 'es' ? 'Sociedad' : 'Society',
-    };
-    return labels[catId] || catId;
-  };
+  const getCategoryLabel = (catId) => CATEGORY_LABELS[catId]?.[lang] || catId;
 
-  const formatDate = (date) => {
-    if (!date) return '';
-    return date.toLocaleDateString(lang === 'es' ? 'es-ES' : 'en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-  };
+  const topPercent = stats.totalFavorites > 0 && stats.topCategory
+    ? Math.round((stats.categoriesCount[stats.topCategory] / stats.totalFavorites) * 100)
+    : 0;
 
   return (
-    <div className="w-full min-h-screen bg-hell-bg">
-      <TopNav
-        title={lang === 'es' ? 'Tu Progreso' : 'Your Progress'}
-        onBack={() => onNavigate('home')}
-        lang={lang}
-        onLanguageChange={onLanguageChange}
-      />
-
-      <div className="max-w-md lg:max-w-2xl mx-auto px-4 lg:px-8 pt-20 pb-6">
-        {/* Progreso en el Diccionario del Diablo — esto es lo que Guardadas no tiene */}
-        <div className="grid grid-cols-3 gap-3 mb-6">
-          <div className="card-hell bg-hell-card/90 border-hell p-4 text-center hover-lift">
-            <p className="text-3xl font-black text-hell-gold">{dayIndex + 1}</p>
-            <p className="text-hell-text-secondary text-xs mt-1">
-              {lang === 'es' ? 'Día' : 'Day'}
-            </p>
-          </div>
-          <div className="card-hell bg-hell-card/90 border-hell p-4 text-center hover-lift">
-            <p className="text-3xl font-black text-hell-gold">🔥{streak}</p>
-            <p className="text-hell-text-secondary text-xs mt-1">
-              {lang === 'es' ? 'Racha' : 'Streak'}
-            </p>
-          </div>
-          <div className="card-hell bg-hell-card/90 border-hell p-4 text-center hover-lift">
-            <p className="text-3xl font-black text-hell-gold">{unlockedCount}</p>
-            <p className="text-hell-text-secondary text-xs mt-1">
-              / {allRevelations.length}
-            </p>
-          </div>
-        </div>
-        <div className="w-full h-2 bg-hell-orange-dark/30 rounded-full overflow-hidden mb-8">
-          <div
-            className="h-full bg-hell-orange-dark"
-            style={{ width: `${(unlockedCount / allRevelations.length) * 100}%` }}
-          />
+    <div className="w-full min-h-screen bg-paper pb-20 pt-28">
+      <div className="max-w-5xl mx-auto px-4 lg:px-8">
+        <div className="flex items-baseline justify-between border-t-[3px] border-b border-ink pt-5 pb-4 mb-8">
+          <h1 className="font-nameplate font-semibold text-xl tracking-tight uppercase text-ink">
+            {lang === 'es' ? 'El Espejo' : 'The Mirror'}
+          </h1>
+          <span className="font-nameplate text-[11px] text-sub tracking-wider">
+            {lang === 'es' ? 'día' : 'day'} {dayIndex + 1} · {lang === 'es' ? 'racha' : 'streak'} {streak}d
+          </span>
         </div>
 
         {loading ? (
-          <div className="text-center py-12">
-            <p className="text-hell-text-secondary">
-              {lang === 'es' ? 'Cargando...' : 'Loading...'}
+          <p className="font-nameplate text-sub text-sm py-12 text-center">
+            {lang === 'es' ? 'Cargando…' : 'Loading…'}
+          </p>
+        ) : stats.totalFavorites === 0 ? (
+          <div className="py-12 text-center">
+            <p className="font-serif italic text-xl text-ink mb-4 max-w-md mx-auto">
+              {lang === 'es'
+                ? 'Todavía no hay suficiente evidencia contra ti.'
+                : "There's not enough evidence against you yet."}
             </p>
+            <button onClick={() => onNavigate('home')} className="byline-link mx-auto">
+              {lang === 'es' ? 'Ir a Hoy' : 'Go to Today'}
+            </button>
           </div>
         ) : (
           <>
-            {/* Main Stats Cards */}
-            <div className="space-y-4 mb-6">
-              {/* Total Favorites */}
-              <div className="card-hell bg-hell-card/90 border-hell p-6 hover-lift">
-                <div className="flex justify-between items-center">
-                  <div>
-                    <p className="text-hell-text-secondary text-sm mb-2">
-                      {lang === 'es' ? 'Total Guardadas' : 'Total Saved'}
-                    </p>
-                    <p className="text-4xl font-black text-hell-gold">
-                      {stats.totalFavorites}
-                    </p>
-                  </div>
-                  <div className="text-5xl opacity-30">❤️</div>
-                </div>
-              </div>
-
-              {/* Top Category */}
-              {stats.topCategory && (
-                <div className="card-hell bg-hell-card/90 border-hell p-6 hover-lift">
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <p className="text-hell-text-secondary text-sm mb-2">
-                        {lang === 'es' ? 'Top Categoría' : 'Top Category'}
-                      </p>
-                      <p className="text-2xl font-bold text-hell-gold-soft">
-                        {getCategoryLabel(stats.topCategory)}
-                      </p>
-                      <p className="text-xs text-hell-text-secondary mt-1">
-                        {stats.categoriesCount[stats.topCategory]} {lang === 'es' ? 'revelaciones' : 'revelations'}
-                      </p>
-                    </div>
-                    <div className="text-5xl opacity-30">🔥</div>
-                  </div>
-                </div>
-              )}
-
-              {/* Last Saved */}
+            {/* Veredicto — la observación interpretable que pide el PRD, no un dashboard */}
+            <p className="kicker mb-2">
+              {lang === 'es' ? 'Perfil de lector' : 'Reader profile'}
+            </p>
+            <p className="font-display font-black text-[26px] sm:text-[32px] leading-tight text-ink mb-3 max-w-lg">
+              {lang === 'es'
+                ? `Pareces particularmente escéptico con ${getCategoryLabel(stats.topCategory)}.`
+                : `You seem particularly skeptical about ${getCategoryLabel(stats.topCategory)}.`}
+            </p>
+            <p className="font-nameplate text-[12px] text-sub mb-8">
+              {topPercent}% {lang === 'es' ? 'de tus recortes guardados' : 'of your saved clippings'}
               {stats.lastSaved && (
-                <div className="card-hell bg-hell-card/90 border-hell p-6 hover-lift">
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <p className="text-hell-text-secondary text-sm mb-2">
-                        {lang === 'es' ? 'Última Guardada' : 'Last Saved'}
-                      </p>
-                      <p className="text-xs text-hell-gold-soft">
-                        {formatDate(stats.lastSaved)}
-                      </p>
-                    </div>
-                    <div className="text-5xl opacity-30">⏰</div>
-                  </div>
-                </div>
+                <> · {lang === 'es' ? 'última:' : 'latest:'} {lang === 'es' ? stats.lastSaved.revelation.wordES : stats.lastSaved.revelation.wordEN}</>
               )}
+            </p>
+
+            {/* Desglose — barras planas, sin degradados, sin rounded-full */}
+            <div className="border-t border-ink pt-5">
+              <p className="font-nameplate text-[10px] tracking-widest uppercase text-sub mb-4">
+                {lang === 'es' ? 'Desglose por materia' : 'Breakdown by subject'}
+              </p>
+              <div className="space-y-3">
+                {Object.entries(stats.categoriesCount)
+                  .sort((a, b) => b[1] - a[1])
+                  .map(([cat, count]) => (
+                    <div key={cat} className="flex items-center gap-3">
+                      <span className="font-nameplate text-[11px] uppercase text-ink w-24 flex-none truncate">
+                        {getCategoryLabel(cat)}
+                      </span>
+                      <div className="flex-1 h-[3px] bg-ink/10">
+                        <div
+                          className="h-full bg-ink"
+                          style={{ width: `${(count / stats.totalFavorites) * 100}%` }}
+                        />
+                      </div>
+                      <span className="font-nameplate text-[11px] text-sub w-6 text-right flex-none">
+                        {count}
+                      </span>
+                    </div>
+                  ))}
+              </div>
             </div>
 
-            {/* Categories Breakdown */}
-            {Object.keys(stats.categoriesCount).length > 0 && (
-              <div className="card-hell bg-hell-card/90 border-hell p-6">
-                <h3 className="text-hell-gold font-bold text-sm uppercase mb-4">
-                  {lang === 'es' ? 'Desglose por Categoría' : 'Breakdown by Category'}
-                </h3>
-
-                <div className="space-y-3">
-                  {Object.entries(stats.categoriesCount)
-                    .sort((a, b) => b[1] - a[1])
-                    .map(([cat, count]) => (
-                      <div key={cat} className="flex items-center justify-between">
-                        <span className="text-hell-gold-soft text-sm">
-                          {getCategoryLabel(cat)}
-                        </span>
-                        <div className="flex items-center gap-2">
-                          <div className="w-24 h-2 bg-hell-orange-dark/30 rounded-full overflow-hidden">
-                            <div
-                              className="h-full bg-hell-orange-dark"
-                              style={{
-                                width: `${(count / stats.totalFavorites) * 100}%`,
-                              }}
-                            />
-                          </div>
-                          <span className="text-hell-text-secondary text-xs font-bold w-8 text-right">
-                            {count}
-                          </span>
-                        </div>
-                      </div>
-                    ))}
-                </div>
-              </div>
-            )}
-
-            {/* Empty State */}
-            {stats.totalFavorites === 0 && (
-              <div className="text-center py-12">
-                <p className="text-hell-text-secondary mb-4">
-                  {lang === 'es'
-                    ? 'Aún no has guardado revelaciones'
-                    : "You haven't saved any revelations yet"}
-                </p>
-                <button
-                  onClick={() => onNavigate('home')}
-                  className="btn-hell-primary"
-                >
-                  {lang === 'es' ? 'Explorar Revelaciones' : 'Explore Revelations'}
-                </button>
-              </div>
-            )}
-
-            {/* Link a Acerca de — en mobile ya no vive en la barra de tabs */}
-            <div className="text-center mt-8 lg:hidden">
-              <button
-                onClick={() => onNavigate('about')}
-                className="text-hell-text-secondary text-sm hover:text-hell-orange transition-smooth"
-              >
-                ℹ️ {lang === 'es' ? 'Acerca de esta app' : 'About this app'}
-              </button>
+            {/* Progreso en el corpus */}
+            <div className="border-t border-ink mt-8 pt-5 flex items-center justify-between font-nameplate text-[11px] uppercase tracking-wider text-sub">
+              <span>{lang === 'es' ? 'Corpus desbloqueado' : 'Corpus unlocked'}</span>
+              <span className="text-ink">{unlockedCount} / {allRevelations.length}</span>
+            </div>
+            <div className="h-[3px] bg-ink/10 mt-2">
+              <div
+                className="h-full bg-accent"
+                style={{ width: `${(unlockedCount / allRevelations.length) * 100}%` }}
+              />
             </div>
           </>
         )}

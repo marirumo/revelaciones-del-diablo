@@ -13,24 +13,27 @@ export const LanguageToggle = ({ currentLang, onLanguageChange }) => {
   };
 
   return (
-    <div className="flex items-center h-full">
+    <div className="inline-flex items-center gap-2 font-nameplate text-[12px] tracking-widest" role="group" aria-label="Idioma / Language">
       <button
         onClick={() => handleSelect('es')}
         disabled={isChanging}
-        className={`h-full px-3 flex items-center justify-center text-sm font-semibold transition-smooth disabled:opacity-50 ${
-          currentLang === 'es' ? 'bg-hell-orange-dark text-white' : 'text-hell-gold'
+        aria-pressed={currentLang === 'es'}
+        className={`px-1.5 pb-1 min-h-11 transition-smooth disabled:opacity-50 border-b-2 ${
+          currentLang === 'es' ? 'text-ink font-semibold border-accent' : 'text-sub border-transparent hover:text-ink'
         }`}
       >
-        ESP
+        ES
       </button>
+      <span className="text-sub" aria-hidden="true">/</span>
       <button
         onClick={() => handleSelect('en')}
         disabled={isChanging}
-        className={`h-full px-3 flex items-center justify-center text-sm font-semibold transition-smooth disabled:opacity-50 ${
-          currentLang === 'en' ? 'bg-hell-orange-dark text-white' : 'text-hell-gold'
+        aria-pressed={currentLang === 'en'}
+        className={`px-1.5 pb-1 min-h-11 transition-smooth disabled:opacity-50 border-b-2 ${
+          currentLang === 'en' ? 'text-ink font-semibold border-accent' : 'text-sub border-transparent hover:text-ink'
         }`}
       >
-        ENG
+        EN
       </button>
     </div>
   );

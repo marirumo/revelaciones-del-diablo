@@ -1,17 +1,15 @@
 import { useState, useEffect } from 'react';
-import { TopNav } from '../components/TopNav';
 import { RevelationCard } from '../components/RevelationCard';
-import { getRevelationForDay, categories, categoryName } from '../data/revelations';
+import { BackLink } from '../components/BackLink';
+import { getRevelationForDay, allRevelations } from '../data/revelations';
 import { addFavorite, removeFavorite, isFavorite } from '../lib/storage';
-import { getGreeting } from '../lib/greetings';
-import flourish from '../assets/figma/flourish.svg';
 
-export const HomeScreen = ({ lang = 'es', dayIndex = 0, selectedRevelation, onSelectRevelation, onLanguageChange }) => {
+export const HomeScreen = ({ lang = 'es', dayIndex = 0, streak = 1, selectedRevelation, onSelectRevelation }) => {
   const [currentRevelation, setCurrentRevelation] = useState(selectedRevelation || getRevelationForDay(dayIndex));
   const [favorited, setFavorited] = useState(false);
   const [todayRevelation] = useState(getRevelationForDay(dayIndex));
 
-  // Cuando el usuario elige una revelación desde Biblioteca/Categorías, mostrarla aquí
+  // Cuando el usuario elige una revelación desde Archivo/Materias, mostrarla aquí
   useEffect(() => {
     if (selectedRevelation && selectedRevelation.id !== currentRevelation.id) {
       setCurrentRevelation(selectedRevelation);
@@ -27,10 +25,12 @@ export const HomeScreen = ({ lang = 'es', dayIndex = 0, selectedRevelation, onSe
     checkFavorite();
   }, [currentRevelation]);
 
+  const isToday = currentRevelation.id === todayRevelation.id;
+
   const handleShare = () => {
     const text = lang === 'es'
-      ? `🔥 ${currentRevelation.wordES}\n\n"${currentRevelation.revelationES}"\n\n— Revelaciones del Diablo`
-      : `🔥 ${currentRevelation.wordEN}\n\n"${currentRevelation.revelationEN}"\n\n— Devil's Revelations`;
+      ? `${currentRevelation.wordES}\n\n"${currentRevelation.revelationES}"\n\n— Revelaciones del Diablo`
+      : `${currentRevelation.wordEN}\n\n"${currentRevelation.revelationEN}"\n\n— Devil's Revelations`;
 
     if (navigator.share) {
       navigator.share({
@@ -39,7 +39,6 @@ export const HomeScreen = ({ lang = 'es', dayIndex = 0, selectedRevelation, onSe
         url: window.location.href,
       }).catch(err => console.log('Error sharing:', err));
     } else {
-      // Fallback: copy to clipboard
       navigator.clipboard.writeText(text);
       alert(lang === 'es' ? 'Copiado al portapapeles' : 'Copied to clipboard');
     }
@@ -58,31 +57,25 @@ export const HomeScreen = ({ lang = 'es', dayIndex = 0, selectedRevelation, onSe
     }
   };
 
+  const handleBackToToday = () => {
+    onSelectRevelation(todayRevelation);
+  };
+
+  const handleSurprise = () => {
+    const unlocked = allRevelations.filter(r => r.unlockDay <= dayIndex && r.id !== currentRevelation.id);
+    const pool = unlocked.length > 0 ? unlocked : allRevelations;
+    const pick = pool[Math.floor(Math.random() * pool.length)];
+    onSelectRevelation(pick);
+  };
+
   return (
-    <div className="w-full min-h-screen bg-hell-bg pb-24 lg:pb-12 pt-16 animate-fade-in">
-      <TopNav
-        title="😈 Revelaciones"
-        lang={lang}
-        onLanguageChange={onLanguageChange}
-      />
-
-      <div className="max-w-md lg:max-w-3xl mx-auto px-4 lg:px-8 pt-8">
-        <img src={flourish} alt="" className="h-8 mx-auto mb-6 opacity-70" />
-
-        {/* Saludo sarcástico según hora local, cambia una vez al día */}
-        <p className="text-center text-sm text-hell-text-secondary mb-6 font-light animate-fade-in">
-          {getGreeting(lang)}
-        </p>
-
-        {/* Category chip — solo informativo, no lleva a ningún lado */}
-        <div className="flex justify-center mb-6 animate-slide-up-fade">
-          <div className="bg-hell-red/30 border border-hell-red px-4 py-2 flex items-center gap-2">
-            <span className="text-sm text-hell-gold font-semibold">
-              {categories.find(c => c.id === currentRevelation.category)?.emoji}{' '}
-              {categoryName(currentRevelation.category, lang)}
-            </span>
-          </div>
-        </div>
+    <div className="w-full min-h-screen bg-paper pb-20 pt-28">
+      <div className="max-w-5xl mx-auto px-4 lg:px-8">
+        {!isToday && (
+          <BackLink onClick={handleBackToToday}>
+            {lang === 'es' ? 'Volver a Hoy' : 'Back to Today'}
+          </BackLink>
+        )}
 
         <RevelationCard
           revelation={currentRevelation}
@@ -90,10 +83,16 @@ export const HomeScreen = ({ lang = 'es', dayIndex = 0, selectedRevelation, onSe
           isFavorite={favorited}
           onShare={handleShare}
           onFavorite={handleFavorite}
-          isToday={currentRevelation.id === todayRevelation.id}
+          isToday={isToday}
+          streak={streak}
         />
 
-        <img src={flourish} alt="" className="h-8 mx-auto mt-8 opacity-70" />
+        <button
+          onClick={handleSurprise}
+          className="mt-5 font-nameplate text-[10px] tracking-widest uppercase text-sub hover:text-ink transition-smooth min-h-11"
+        >
+          {lang === 'es' ? 'Sorpréndeme →' : 'Surprise me →'}
+        </button>
       </div>
     </div>
   );

@@ -13,7 +13,7 @@ const CATEGORY_LABELS = {
   sociedad: { es: 'Sociedad', en: 'Society' },
 };
 
-export const StatsScreen = ({ lang = 'es', onNavigate, dayIndex = 0, streak = 1 }) => {
+export const StatsScreen = ({ lang = 'en', onNavigate, dayIndex = 0, streak = 1 }) => {
   const unlockedCount = Math.min(dayIndex + 1, allRevelations.length);
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState({

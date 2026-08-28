@@ -31,7 +31,7 @@ export const categories = [
   { id: "sociedad", emoji: "🌍", name: "Sociedad", nameEN: "Society", count: revelationsByCategory.sociedad.length },
 ];
 
-export const categoryName = (categoryId, lang = 'es') => {
+export const categoryName = (categoryId, lang = 'en') => {
   const cat = categories.find(c => c.id === categoryId);
   if (!cat) return categoryId;
   return lang === 'es' ? cat.name : cat.nameEN;

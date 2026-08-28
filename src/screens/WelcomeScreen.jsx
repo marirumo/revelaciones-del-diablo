@@ -1,4 +1,4 @@
-export const WelcomeScreen = ({ lang = 'es', onComplete }) => {
+export const WelcomeScreen = ({ lang = 'en', onComplete }) => {
   const labels = lang === 'es'
     ? {
         tagline: 'Una verdad incómoda cada día, directo del Diccionario del Diablo.',

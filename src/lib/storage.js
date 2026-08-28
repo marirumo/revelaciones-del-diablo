@@ -137,7 +137,7 @@ export const getPreference = async (key) => {
 };
 
 export const getLanguage = async () => {
-  return (await getPreference('language')) || 'es';
+  return (await getPreference('language')) || 'en';
 };
 
 export const setLanguage = async (lang) => {

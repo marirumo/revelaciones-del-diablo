@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 
 export const usePWA = () => {
   useEffect(() => {
-    // Solo registrar en producción o si está disponible
+
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker
@@ -19,7 +19,7 @@ export const usePWA = () => {
                   navigator.serviceWorker.controller
                 ) {
                   console.log('📦 Nueva versión disponible');
-                  // Aquí podrías mostrar notificación al usuario
+
                   if (
                     window.confirm(
                       'Nueva versión disponible. ¿Recargar?'

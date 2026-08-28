@@ -13,7 +13,7 @@ const FALLBACK_GIFS = [
   'https://media.giphy.com/media/d3z3cqarg2RBUWVi/giphy.gif', // Devil
 ];
 
-export const fetchGif = async (query, lang = 'es') => {
+export const fetchGif = async (query, lang = 'en') => {
   try {
     if (!GIPHY_API_KEY) {
       console.warn('No GIPHY_API_KEY provided, using fallback');

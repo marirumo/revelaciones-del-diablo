@@ -13,7 +13,7 @@ import { getLanguage, getFirstVisitDayIndex, getStreak, getHasSeenWelcome, setHa
 
 export const AppRouter = () => {
   const [currentScreen, setCurrentScreen] = useState('home');
-  const [lang, setLang] = useState('es');
+  const [lang, setLang] = useState('en');
   const [selectedRevelation, setSelectedRevelation] = useState(null);
   const [screenParams, setScreenParams] = useState({});
   const [isLoading, setIsLoading] = useState(true);
@@ -30,7 +30,7 @@ export const AppRouter = () => {
         getStreak(),
         getHasSeenWelcome(),
       ]);
-      setLang(savedLang || 'es');
+      setLang(savedLang || 'en');
       setDayIndex(firstVisitDayIndex);
       setStreak(currentStreak);
       setShowWelcome(!hasSeenWelcome);

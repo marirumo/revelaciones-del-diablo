@@ -6,7 +6,7 @@ const stripAccents = (s) => s.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 // El Índice del Diablo — el corpus completo (956), sin el desbloqueo diario
 // de Archivo: es referencia, no descubrimiento. Agrupado por número o por
 // letra, como el índice de atrás de un diccionario real.
-export const IndexScreen = ({ lang = 'es', onSelectRevelation }) => {
+export const IndexScreen = ({ lang = 'en', onSelectRevelation }) => {
   const [mode, setMode] = useState('numeric'); // 'numeric' | 'alphabetic'
   const [query, setQuery] = useState('');
   const [category, setCategory] = useState('all');

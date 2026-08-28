@@ -2,9 +2,6 @@ import { useEffect, useState } from 'react';
 import { fetchGif } from '../lib/giphy';
 import { categoryName, allRevelations } from '../data/revelations';
 
-// Palabras largas en Playfair Black rompen feo a mitad de la palabra si el
-// tamaño es fijo — igual que "Plenipotentiary" (15) o "Reconocimiento" (14).
-// Bajamos el tamaño según el largo para que casi siempre entre en una línea.
 const getHeadlineSize = (word) => {
   const len = word.length;
   if (len <= 8) return 'clamp(2.6rem, 8vw, 4.2rem)';
@@ -24,7 +21,7 @@ const formatDate = (lang) => {
 
 export const RevelationCard = ({
   revelation,
-  lang = 'es',
+  lang = 'en',
   isFavorite,
   onShare,
   onFavorite,

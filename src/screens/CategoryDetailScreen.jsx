@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 import { BackLink } from '../components/BackLink';
 import { revelationsByCategory, categories } from '../data/revelations';
 
-export const CategoryDetailScreen = ({ lang = 'es', onNavigate, categoryId, onSelectRevelation, dayIndex = 0 }) => {
+export const CategoryDetailScreen = ({ lang = 'en', onNavigate, categoryId, onSelectRevelation, dayIndex = 0 }) => {
   const [sortBy, setSortBy] = useState('number'); // 'number' o 'alphabetic'
 
   const categoryData = categories.find(c => c.id === categoryId);

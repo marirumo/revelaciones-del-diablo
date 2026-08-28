@@ -4,7 +4,7 @@ import { BackLink } from '../components/BackLink';
 import { getRevelationForDay, allRevelations } from '../data/revelations';
 import { addFavorite, removeFavorite, isFavorite } from '../lib/storage';
 
-export const HomeScreen = ({ lang = 'es', dayIndex = 0, streak = 1, selectedRevelation, onSelectRevelation }) => {
+export const HomeScreen = ({ lang = 'en', dayIndex = 0, streak = 1, selectedRevelation, onSelectRevelation }) => {
   const [currentRevelation, setCurrentRevelation] = useState(selectedRevelation || getRevelationForDay(dayIndex));
   const [favorited, setFavorited] = useState(false);
   const [todayRevelation] = useState(getRevelationForDay(dayIndex));

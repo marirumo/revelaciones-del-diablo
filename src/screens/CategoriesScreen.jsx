@@ -1,6 +1,6 @@
 import { categories } from '../data/revelations';
 
-export const CategoriesScreen = ({ lang = 'es', onNavigate }) => {
+export const CategoriesScreen = ({ lang = 'en', onNavigate }) => {
   const handleCategoryClick = (categoryId) => {
     onNavigate('category-detail', { categoryId });
   };

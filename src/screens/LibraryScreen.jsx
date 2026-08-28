@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
 import { allRevelations, categories, categoryName } from '../data/revelations';
 
-export const LibraryScreen = ({ lang = 'es', onSelectRevelation, dayIndex = 0 }) => {
+export const LibraryScreen = ({ lang = 'en', onSelectRevelation, dayIndex = 0 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const isSearching = searchQuery.trim().length > 0;

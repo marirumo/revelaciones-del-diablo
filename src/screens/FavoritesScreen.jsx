@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { getAllFavorites } from '../lib/storage';
 import { categoryName } from '../data/revelations';
 
-export const FavoritesScreen = ({ lang = 'es', onSelectRevelation }) => {
+export const FavoritesScreen = ({ lang = 'en', onSelectRevelation }) => {
   const [favorites, setFavorites] = useState([]);
   const [loading, setLoading] = useState(true);
 

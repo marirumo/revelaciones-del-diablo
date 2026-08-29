@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { HomeScreen } from '../screens/HomeScreen';
-import { LibraryScreen } from '../screens/LibraryScreen';
 import { IndexScreen } from '../screens/IndexScreen';
 import { CategoriesScreen } from '../screens/CategoriesScreen';
 import { CategoryDetailScreen } from '../screens/CategoryDetailScreen';
@@ -89,13 +88,6 @@ export const AppRouter = () => {
           <HomeScreen
             {...commonProps}
             selectedRevelation={selectedRevelation}
-            onSelectRevelation={handleSelectRevelation}
-          />
-        );
-      case 'library':
-        return (
-          <LibraryScreen
-            {...commonProps}
             onSelectRevelation={handleSelectRevelation}
           />
         );

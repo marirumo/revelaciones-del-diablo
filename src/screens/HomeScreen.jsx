@@ -5,6 +5,7 @@ import { DevilsAdvocateModal } from '../components/DevilsAdvocateModal';
 import { getRevelationForDay, allRevelations } from '../data/revelations';
 import { addFavorite, removeFavorite, isFavorite } from '../lib/storage';
 import { publishRevelation } from '../lib/socialCard';
+import { track } from '../lib/analytics';
 
 const formatDate = (lang) => {
   const d = new Date();
@@ -19,9 +20,10 @@ export const HomeScreen = ({ lang = 'en', dayIndex = 0, streak = 1, selectedReve
   const [currentRevelation, setCurrentRevelation] = useState(selectedRevelation || getRevelationForDay(dayIndex));
   const [favorited, setFavorited] = useState(false);
   const [todayRevelation] = useState(getRevelationForDay(dayIndex));
-  const [unveiledToday, setUnveiledToday] = useState(false);
   const [showAdvocate, setShowAdvocate] = useState(false);
+  const [advocatePromptFor, setAdvocatePromptFor] = useState(null);
   const [shareNotice, setShareNotice] = useState('');
+  const [searching, setSearching] = useState(false);
 
   // Cuando el usuario elige una revelación desde Archivo/Materias, mostrarla aquí
   useEffect(() => {
@@ -36,6 +38,8 @@ export const HomeScreen = ({ lang = 'en', dayIndex = 0, streak = 1, selectedReve
       setFavorited(fav);
     };
     checkFavorite();
+    setAdvocatePromptFor(null);
+    track('revelation_viewed', { id: currentRevelation.id, category: currentRevelation.category, edition: currentRevelation.number });
   }, [currentRevelation]);
 
   const isToday = currentRevelation.id === todayRevelation.id;
@@ -43,6 +47,7 @@ export const HomeScreen = ({ lang = 'en', dayIndex = 0, streak = 1, selectedReve
   const handleShare = async () => {
     try {
       const result = await publishRevelation(currentRevelation, lang);
+      track('revelation_shared', { id: currentRevelation.id, method: result.method });
       if (result.method === 'download') {
         setShareNotice(
           lang === 'es'
@@ -63,17 +68,23 @@ export const HomeScreen = ({ lang = 'en', dayIndex = 0, streak = 1, selectedReve
       if (favorited) {
         await removeFavorite(currentRevelation.id);
         setFavorited(false);
+        track('revelation_unsaved', { id: currentRevelation.id, category: currentRevelation.category });
       } else {
         await addFavorite(currentRevelation);
         setFavorited(true);
-        setShowAdvocate(true);
+        track('revelation_saved', { id: currentRevelation.id, category: currentRevelation.category });
       }
+      // PRD §15: la interacción con el Diablo aparece después de tocar
+      // guardar/quitar, como una invitación en línea, no como un modal
+      // obligatorio. Se muestra en ambos sentidos del toggle.
+      setAdvocatePromptFor(currentRevelation.id);
     } catch (error) {
       console.error('Error toggling favorite:', error);
     }
   };
 
   const handleBackToToday = () => {
+    setAdvocatePromptFor(null);
     onSelectRevelation(todayRevelation);
   };
 
@@ -81,7 +92,20 @@ export const HomeScreen = ({ lang = 'en', dayIndex = 0, streak = 1, selectedReve
     const unlocked = allRevelations.filter(r => r.unlockDay <= dayIndex && r.id !== currentRevelation.id);
     const pool = unlocked.length > 0 ? unlocked : allRevelations;
     const pick = pool[Math.floor(Math.random() * pool.length)];
-    onSelectRevelation(pick);
+    track('surprise_me_used', { fromId: currentRevelation.id });
+    // PRD §9: un momento breve de "el Diablo está buscando algo apropiado"
+    // en vez de saltar directo al resultado, para que no se sienta un randomizer plano.
+    setAdvocatePromptFor(null);
+    setSearching(true);
+    setTimeout(() => {
+      onSelectRevelation(pick);
+      setSearching(false);
+    }, 650);
+  };
+
+  const handleOpenAdvocate = () => {
+    track('devils_advocate_opened', { id: currentRevelation.id, category: currentRevelation.category });
+    setShowAdvocate(true);
   };
 
   return (
@@ -125,16 +149,31 @@ export const HomeScreen = ({ lang = 'en', dayIndex = 0, streak = 1, selectedReve
           isToday={isToday}
           streak={streak}
           dayIndex={dayIndex}
-          revealed={!isToday || unveiledToday}
-          onReveal={() => setUnveiledToday(true)}
           hideHeader={true}
         />
 
+        {advocatePromptFor === currentRevelation.id && !showAdvocate && (
+          <div className="mt-6 border-t border-ink pt-5 animate-fade-in">
+            <p className="font-nameplate text-[10px] tracking-widest uppercase text-sub mb-1">
+              {lang === 'es' ? 'El Diablo tiene una pregunta.' : 'The Devil has a question.'}
+            </p>
+            <p className="font-serif italic text-[15px] text-ink mb-2">
+              {lang === 'es' ? '¿Se equivocó esta vez?' : 'Did he get this one wrong?'}
+            </p>
+            <button onClick={handleOpenAdvocate} className="byline-link">
+              {lang === 'es' ? 'Dígale por qué →' : 'Tell him why →'}
+            </button>
+          </div>
+        )}
+
         <button
           onClick={handleSurprise}
+          disabled={searching}
           className="mt-5 font-nameplate text-[10px] tracking-widest uppercase text-sub hover:text-ink transition-smooth min-h-11"
         >
-          {lang === 'es' ? 'Sorpréndeme →' : 'Surprise me →'}
+          {searching
+            ? (lang === 'es' ? 'El Diablo busca algo apropiado…' : 'The Devil is looking for something appropriate…')
+            : (lang === 'es' ? 'Sorpréndeme →' : 'Surprise me →')}
         </button>
 
         {shareNotice && (
@@ -145,7 +184,7 @@ export const HomeScreen = ({ lang = 'en', dayIndex = 0, streak = 1, selectedReve
       </div>
 
       {showAdvocate && (
-        <DevilsAdvocateModal lang={lang} onClose={() => setShowAdvocate(false)} />
+        <DevilsAdvocateModal lang={lang} revelation={currentRevelation} onClose={() => setShowAdvocate(false)} />
       )}
     </div>
   );

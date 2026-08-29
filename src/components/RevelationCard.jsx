@@ -28,8 +28,6 @@ export const RevelationCard = ({
   isToday = false,
   streak = 1,
   dayIndex = 0,
-  revealed = true,
-  onReveal,
   hideHeader = false,
 }) => {
   const [gifUrl, setGifUrl] = useState(null);
@@ -74,83 +72,69 @@ export const RevelationCard = ({
         {categoryName(revelation.category, lang)}
       </p>
 
-      <div className="relative">
-        <div
-          className={`transition-all duration-500 ease-in-out ${
-            revealed ? 'blur-0' : 'blur-[8px] select-none pointer-events-none'
-          }`}
+      <div>
+        <h2
+          className="font-display font-black uppercase leading-[0.92] text-ink break-words text-balance"
+          style={{ fontSize: getHeadlineSize(word) }}
         >
-          <h2
-            className="font-display font-black uppercase leading-[0.92] text-ink break-words text-balance"
-            style={{ fontSize: getHeadlineSize(word) }}
-          >
-            {word}
-          </h2>
-          <p className="font-nameplate text-[11px] tracking-widest uppercase text-sub mt-1 mb-4">
-            {lang === 'es' ? 'sustantivo' : 'noun'}
-          </p>
+          {word}
+        </h2>
+        <p className="font-nameplate text-[11px] tracking-widest uppercase text-sub mt-1 mb-4">
+          {lang === 'es' ? 'sustantivo' : 'noun'}
+        </p>
 
-          <hr className="border-ink mb-6" />
+        <hr className="border-ink mb-6" />
 
-          <p className="font-serif italic text-[17px] leading-relaxed text-ink max-w-[60ch] lg:max-w-none mb-6">
-            "{bierce}"
-          </p>
+        <p className="font-serif italic text-[17px] leading-relaxed text-ink max-w-[60ch] lg:max-w-none mb-6">
+          "{bierce}"
+        </p>
 
-          <div
-            className="gif-band aspect-video mb-6"
-            style={{
-              backgroundImage: gifUrl
-                ? undefined
-                : 'radial-gradient(circle at 22% 32%, rgba(20,19,17,.06) 0 2px, transparent 2px), radial-gradient(circle at 62% 68%, rgba(20,19,17,.06) 0 2px, transparent 2px)',
-              backgroundSize: '9px 9px',
-            }}
-          >
-            {gifUrl ? (
-              <img
-                src={gifUrl}
-                alt={word}
-                className="w-full h-full object-contain"
-                onError={() => setGifUrl(null)}
-              />
-            ) : (
-              <span className="font-nameplate text-[10px] tracking-[.2em] uppercase text-sub">
-                {loading
-                  ? (lang === 'es' ? 'CARGANDO GIF…' : 'LOADING GIF…')
-                  : 'GIF — ' + (lang === 'es' ? 'INTERRUPCIÓN VISUAL' : 'VISUAL INTERRUPTION')}
-              </span>
-            )}
-          </div>
-
-          <p className="font-serif text-[16px] leading-relaxed text-ink max-w-[52ch] lg:max-w-none mb-8">
-            {revelationText}
-          </p>
-
-          <div className="flex items-center gap-5 border-t border-ink pt-5">
-            <button
-              onClick={onFavorite}
-              aria-pressed={!!isFavorite}
-              className="byline-link"
-            >
-              {isFavorite
-                ? (lang === 'es' ? 'Me llegó' : 'Stung')
-                : (lang === 'es' ? 'Esta me llegó' : 'This one stung')}
-            </button>
-            <button onClick={onShare} className="byline-link">
-              {lang === 'es' ? 'Publica esta verdad' : 'Publish this truth'}
-            </button>
-          </div>
+        <div
+          className="gif-band aspect-video mb-6 lg:max-w-md lg:mx-auto"
+          style={{
+            backgroundImage: gifUrl
+              ? undefined
+              : 'radial-gradient(circle at 22% 32%, rgba(20,19,17,.06) 0 2px, transparent 2px), radial-gradient(circle at 62% 68%, rgba(20,19,17,.06) 0 2px, transparent 2px)',
+            backgroundSize: '9px 9px',
+          }}
+        >
+          {gifUrl ? (
+            <img
+              src={gifUrl}
+              alt={word}
+              className="w-full h-full object-contain"
+              onError={() => setGifUrl(null)}
+            />
+          ) : (
+            <span className="font-nameplate text-[10px] tracking-[.2em] uppercase text-sub">
+              {loading
+                ? (lang === 'es' ? 'CARGANDO GIF…' : 'LOADING GIF…')
+                : 'GIF — ' + (lang === 'es' ? 'INTERRUPCIÓN VISUAL' : 'VISUAL INTERRUPTION')}
+            </span>
+          )}
         </div>
 
-        {!revealed && (
-          <div className="absolute inset-0 flex items-center justify-center">
-            <button
-              onClick={onReveal}
-              className="font-nameplate text-[13px] tracking-widest uppercase text-ink bg-paper border-2 border-ink px-6 py-3 min-h-11 hover:border-accent hover:text-accent transition-smooth"
-            >
-              {lang === 'es' ? 'Revela la verdad de hoy' : "Unveil today's truth"}
-            </button>
-          </div>
-        )}
+        <p className="kicker mb-2">
+          {lang === 'es' ? 'Por si se te escapó la idea' : 'In case you missed the point'}
+        </p>
+        <p className="font-serif text-[16px] leading-relaxed text-ink max-w-[52ch] lg:max-w-none mb-8">
+          {revelationText}
+        </p>
+
+        <div className="flex items-center gap-5 border-t border-ink pt-5">
+          <button
+            onClick={onFavorite}
+            aria-pressed={!!isFavorite}
+            className="byline-link"
+          >
+            {isFavorite
+              ? (lang === 'es' ? 'Quitar de mi cinismo' : 'Remove from my cynicism')
+              : (lang === 'es' ? 'Esta me llegó' : 'This one stung')}
+          </button>
+          <button onClick={onShare} className="byline-link">
+            {lang === 'es' ? 'Publica esta verdad' : 'Publish this truth'}
+          </button>
+        </div>
       </div>
     </article>
   );

@@ -1,33 +1,61 @@
-import { useMemo, useState } from 'react';
-import { allRevelations, categories } from '../data/revelations';
+import { useEffect, useMemo, useState } from 'react';
+import { allRevelations, categories, categoryName } from '../data/revelations';
+import { track } from '../lib/analytics';
 
 const stripAccents = (s) => s.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 
-// El Índice del Diablo — el corpus completo (956), sin el desbloqueo diario
-// de Archivo: es referencia, no descubrimiento. Agrupado por número o por
-// letra, como el índice de atrás de un diccionario real.
-export const IndexScreen = ({ lang = 'en', onSelectRevelation }) => {
-  const [mode, setMode] = useState('numeric'); // 'numeric' | 'alphabetic'
+// The Index of Defeats (PRD §10) — fusiona lo que antes eran dos pantallas
+// (Archive + Index): un mismo corpus, con un toggle de alcance (solo lo
+// desbloqueado día a día, o las 956 completas) y tres órdenes (edición,
+// numérico, alfabético). Buscar siempre corre sobre el corpus completo —
+// si ya sabés qué palabra querés, no tiene sentido que el desbloqueo
+// diario te la esconda.
+export const IndexScreen = ({ lang = 'en', onSelectRevelation, dayIndex = 0 }) => {
+  const [scope, setScope] = useState('unlocked'); // 'unlocked' | 'all'
+  const [order, setOrder] = useState('newest'); // 'newest' | 'numeric' | 'alphabetic'
   const [query, setQuery] = useState('');
   const [category, setCategory] = useState('all');
 
+  const isSearching = query.trim().length > 0;
+  const unlockedCount = useMemo(() => allRevelations.filter(r => r.unlockDay <= dayIndex).length, [dayIndex]);
+
+  useEffect(() => {
+    if (!isSearching) return;
+    const timeout = setTimeout(() => track('archive_searched', { query: query.trim() }), 300);
+    return () => clearTimeout(timeout);
+  }, [query, isSearching]);
+
   const filtered = useMemo(() => {
     let result = allRevelations;
+
+    if (!isSearching && scope === 'unlocked') {
+      result = result.filter(r => r.unlockDay <= dayIndex);
+    }
+
     if (category !== 'all') {
       result = result.filter(r => r.category === category);
     }
-    if (query.trim()) {
+
+    if (isSearching) {
       const q = stripAccents(query.toLowerCase());
       result = result.filter(r => {
         const w = stripAccents((lang === 'es' ? r.wordES : r.wordEN).toLowerCase());
         return w.includes(q);
       });
     }
+
     return result;
-  }, [category, query, lang]);
+  }, [scope, category, query, isSearching, dayIndex, lang]);
+
+  const flatList = useMemo(() => {
+    if (order !== 'newest') return [];
+    return [...filtered].sort((a, b) => b.unlockDay - a.unlockDay);
+  }, [filtered, order]);
 
   const groups = useMemo(() => {
-    if (mode === 'numeric') {
+    if (order === 'newest') return null;
+
+    if (order === 'numeric') {
       const buckets = {};
       filtered.forEach(r => {
         const bucketStart = Math.floor((r.number - 1) / 100) * 100 + 1;
@@ -42,6 +70,7 @@ export const IndexScreen = ({ lang = 'en', onSelectRevelation }) => {
           items: [...items].sort((a, b) => a.number - b.number),
         }));
     }
+
     const buckets = {};
     filtered.forEach(r => {
       const word = lang === 'es' ? r.wordES : r.wordEN;
@@ -59,39 +88,80 @@ export const IndexScreen = ({ lang = 'en', onSelectRevelation }) => {
           return aw.localeCompare(bw, lang === 'es' ? 'es-ES' : 'en-US');
         }),
       }));
-  }, [filtered, mode, lang]);
+  }, [filtered, order, lang]);
+
+  const progressLabel = isSearching
+    ? `${filtered.length} / ${allRevelations.length}`
+    : scope === 'unlocked'
+      ? `${unlockedCount} / ${allRevelations.length}`
+      : `${allRevelations.length} / ${allRevelations.length}`;
+
+  const isEmpty = order === 'newest' ? flatList.length === 0 : groups.length === 0;
 
   return (
     <div className="w-full min-h-screen bg-paper pb-20 pt-28">
       <div className="max-w-5xl mx-auto px-4 lg:px-8">
         <div className="flex items-baseline justify-between border-t-[3px] border-b border-ink pt-5 pb-4 mb-5">
           <h1 className="font-nameplate font-semibold text-xl tracking-tight uppercase text-ink">
-            {lang === 'es' ? 'El Índice del Diablo' : "The Devil's Index"}
+            {lang === 'es' ? 'El Índice de las Derrotas' : 'The Index of Defeats'}
           </h1>
           <span className="font-nameplate text-[11px] text-sub tracking-wider">
-            {filtered.length} / {allRevelations.length}
+            {progressLabel}
           </span>
         </div>
         <p className="font-serif italic text-sub text-sm mb-8">
           {lang === 'es'
-            ? 'El corpus completo, sin desbloqueo diario — para consultar, no para esperar.'
-            : 'The full corpus, no daily unlock — for reference, not for waiting.'}
+            ? 'Todo lo que ya desbloqueaste, o el corpus completo — tú decides.'
+            : "Everything you've unlocked so far, or the full corpus — your call."}
         </p>
 
-        <div className="flex flex-wrap items-center gap-4 mb-5">
-          <div className="flex items-center gap-3 flex-none" role="group" aria-label={lang === 'es' ? 'Orden del índice' : 'Index order'}>
+        {/* Alcance — se oculta al buscar, porque buscar siempre corre sobre todo el corpus */}
+        {isSearching ? (
+          <p className="font-nameplate text-[10px] tracking-widest uppercase text-sub mb-5">
+            {lang === 'es' ? 'Buscando en todo el corpus' : 'Searching the full corpus'}
+          </p>
+        ) : (
+          <div className="flex items-center gap-3 mb-5" role="group" aria-label={lang === 'es' ? 'Alcance' : 'Scope'}>
             <button
-              onClick={() => setMode('numeric')}
-              aria-pressed={mode === 'numeric'}
-              className={`font-nameplate text-[11px] tracking-widest uppercase min-h-11 border-b transition-smooth ${mode === 'numeric' ? 'text-ink font-semibold border-accent' : 'text-sub border-transparent hover:text-ink'}`}
+              onClick={() => setScope('unlocked')}
+              aria-pressed={scope === 'unlocked'}
+              className={`font-nameplate text-[11px] tracking-widest uppercase min-h-11 border-b transition-smooth ${scope === 'unlocked' ? 'text-ink font-semibold border-accent' : 'text-sub border-transparent hover:text-ink'}`}
+            >
+              {lang === 'es' ? 'Desbloqueadas' : 'Unlocked'}
+            </button>
+            <span className="text-sub" aria-hidden="true">/</span>
+            <button
+              onClick={() => setScope('all')}
+              aria-pressed={scope === 'all'}
+              className={`font-nameplate text-[11px] tracking-widest uppercase min-h-11 border-b transition-smooth ${scope === 'all' ? 'text-ink font-semibold border-accent' : 'text-sub border-transparent hover:text-ink'}`}
+            >
+              {lang === 'es' ? 'Todo el Corpus' : 'Full Corpus'}
+            </button>
+          </div>
+        )}
+
+        <div className="flex flex-wrap items-center gap-4 mb-5">
+          <div className="flex items-center gap-3 flex-none" role="group" aria-label={lang === 'es' ? 'Orden' : 'Order'}>
+            <button
+              onClick={() => setOrder('newest')}
+              aria-pressed={order === 'newest'}
+              className={`font-nameplate text-[11px] tracking-widest uppercase min-h-11 border-b transition-smooth ${order === 'newest' ? 'text-ink font-semibold border-accent' : 'text-sub border-transparent hover:text-ink'}`}
+            >
+              {lang === 'es' ? 'Recientes' : 'Newest'}
+            </button>
+            <span className="text-sub" aria-hidden="true">/</span>
+            <button
+              onClick={() => setOrder('numeric')}
+              aria-pressed={order === 'numeric'}
+              className={`font-nameplate text-[11px] tracking-widest uppercase min-h-11 border-b transition-smooth ${order === 'numeric' ? 'text-ink font-semibold border-accent' : 'text-sub border-transparent hover:text-ink'}`}
             >
               {lang === 'es' ? 'Numérico' : 'Numeric'}
             </button>
             <span className="text-sub" aria-hidden="true">/</span>
             <button
-              onClick={() => setMode('alphabetic')}
-              aria-pressed={mode === 'alphabetic'}
-              className={`font-nameplate text-[11px] tracking-widest uppercase min-h-11 border-b transition-smooth ${mode === 'alphabetic' ? 'text-ink font-semibold border-accent' : 'text-sub border-transparent hover:text-ink'}`}
+              onClick={() => setOrder('alphabetic')}
+              aria-pressed={order === 'alphabetic'}
+              className={`font-nameplate text-[11px] tracking-widest uppercase min-h-11 border-b transition-smooth ${order === 'alphabetic' ? 'text-ink font-semibold border-accent' : 'text-sub border-transparent hover:text-ink'}`}
             >
               {lang === 'es' ? 'Alfabético' : 'Alphabetic'}
             </button>
@@ -133,8 +203,16 @@ export const IndexScreen = ({ lang = 'en', onSelectRevelation }) => {
           ))}
         </div>
 
-        {/* Riel de salto — ancla directo al bloque numérico o a la letra */}
-        {groups.length > 1 && (
+        {!isSearching && scope === 'unlocked' && unlockedCount < allRevelations.length && (
+          <p className="font-nameplate text-[11px] text-sub mb-4">
+            {allRevelations.length - unlockedCount} {lang === 'es'
+              ? 'todavía sin publicar — o búscalas por nombre arriba'
+              : 'not yet in print — or search for them by name above'}
+          </p>
+        )}
+
+        {/* Riel de salto — solo tiene sentido agrupado por número o letra */}
+        {order !== 'newest' && groups.length > 1 && (
           <nav
             aria-label={lang === 'es' ? 'Saltar a…' : 'Jump to…'}
             className="flex flex-wrap gap-x-1 gap-y-1 mb-6 font-nameplate text-[10px] tracking-wider border-t border-ink pt-3"
@@ -151,10 +229,36 @@ export const IndexScreen = ({ lang = 'en', onSelectRevelation }) => {
           </nav>
         )}
 
-        {groups.length === 0 ? (
+        {isEmpty ? (
           <p className="font-serif italic text-sub py-12 text-center">
-            {lang === 'es' ? 'No se encontraron revelaciones.' : 'No revelations found.'}
+            {isSearching
+              ? (lang === 'es' ? 'No se encontraron revelaciones.' : 'No revelations found.')
+              : scope === 'unlocked'
+                ? (lang === 'es' ? 'Todavía no desbloqueas ninguna. Vuelve mañana o búscala por nombre.' : "You haven't unlocked any yet. Come back tomorrow or search for one by name.")
+                : (lang === 'es' ? 'No se encontraron revelaciones.' : 'No revelations found.')}
           </p>
+        ) : order === 'newest' ? (
+          <div>
+            {flatList.map((revelation) => (
+              <button
+                key={revelation.id}
+                onClick={() => onSelectRevelation(revelation)}
+                className="index-row group"
+              >
+                <span className="font-nameplate text-[11px] text-sub w-10 flex-none">
+                  {String(revelation.number).padStart(3, '0')}
+                </span>
+                <span className="flex-1 min-w-0">
+                  <span className="font-serif font-bold text-lg text-ink group-hover:text-accent transition-smooth block truncate">
+                    {lang === 'es' ? revelation.wordES : revelation.wordEN}
+                  </span>
+                </span>
+                <span className="font-nameplate text-[9.5px] tracking-widest uppercase text-sub flex-none">
+                  {categoryName(revelation.category, lang, true)}
+                </span>
+              </button>
+            ))}
+          </div>
         ) : (
           groups.map(group => (
             <section key={group.key} id={`idx-${group.key}`} className="mb-8 scroll-mt-24">

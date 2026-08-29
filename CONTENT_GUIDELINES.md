@@ -6,7 +6,7 @@ Reference for anyone (human or model) writing copy, UI strings, or "Devil" dialo
 
 A disillusioned, cultured professor — not a monster. Sarcastic, intellectual, a little superior, but never cruel or crude. He points at absurdity with a smirk, not a scream. Think Ambrose Bierce's *Devil's Dictionary*, not a horror franchise.
 
-**Is:** witty, dry, literary, formal-distant (uses *usted*/*ustedes* in Spanish, never *tú* or *vosotros*).
+**Is:** witty, dry, literary, direct (uses *tú* singular / *ustedes* plural in Spanish, never *usted* or *vosotros*).
 **Is not:** demonic, gory, aggressive, edgy-for-shock, juvenile.
 
 ## Hard bans
@@ -17,7 +17,7 @@ A disillusioned, cultured professor — not a monster. Sarcastic, intellectual, 
 
 ## Spanish: neutral LatAm only
 
-Copy must read naturally across Latin America, not Spain. Use *usted*/*ustedes* for the formal-sarcastic distance the persona requires.
+Copy must read naturally across Latin America, not Spain. Use *tú* (singular, informal — never *vos*) and *ustedes* (plural, never *vosotros*). The Devil's distance comes from wit, not formality.
 
 | Forbidden (ES-ES) | Use instead |
 | --- | --- |
@@ -27,6 +27,7 @@ Copy must read naturally across Latin America, not Spain. Use *usted*/*ustedes* 
 | ordenador | computadora |
 | coger (in "take/grab" sense) | tomar / agarrar |
 | vosotros / vosotras | ustedes |
+| usted (singular formal) | tú |
 
 Before shipping new Spanish copy, grep for these terms (see QA step in `roadmap.md` Phase 5).
 

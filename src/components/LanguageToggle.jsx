@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { setLanguage } from '../lib/storage';
+import { track } from '../lib/analytics';
 
 export const LanguageToggle = ({ currentLang, onLanguageChange }) => {
   const [isChanging, setIsChanging] = useState(false);
@@ -8,6 +9,7 @@ export const LanguageToggle = ({ currentLang, onLanguageChange }) => {
     if (newLang === currentLang || isChanging) return;
     setIsChanging(true);
     await setLanguage(newLang);
+    track('language_changed', { from: currentLang, to: newLang });
     onLanguageChange(newLang);
     setIsChanging(false);
   };

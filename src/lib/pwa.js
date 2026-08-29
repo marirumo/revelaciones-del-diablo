@@ -1,7 +1,15 @@
 import { useEffect } from 'react';
+import { track } from './analytics';
 
 export const usePWA = () => {
   useEffect(() => {
+    // PRD §30: install_prompt_shown / pwa_installed — el navegador dispara
+    // estos eventos independientemente de si la app ofrece un botón propio
+    // de instalación; no interceptamos el prompt nativo, solo lo medimos.
+    const handleBeforeInstallPrompt = () => track('install_prompt_shown');
+    const handleAppInstalled = () => track('pwa_installed');
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    window.addEventListener('appinstalled', handleAppInstalled);
 
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
@@ -44,6 +52,11 @@ export const usePWA = () => {
         console.log('🔄 Service Worker actualizado');
       });
     }
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+      window.removeEventListener('appinstalled', handleAppInstalled);
+    };
   }, []);
 };
 

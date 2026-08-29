@@ -4,6 +4,7 @@
 import tailwindConfig from '../../tailwind.config.js';
 import { categoryName } from '../data/revelations';
 import { buildRevelationLink } from './deepLink';
+import { track } from './analytics';
 
 const { paper: PAPER, ink: INK, sub: SUB, accent: ACCENT } = tailwindConfig.theme.extend.colors;
 const SIZE = 1080;
@@ -122,6 +123,7 @@ export const publishRevelation = async (revelation, lang = 'en') => {
     : `${word} — Devil's Revelations`;
 
   const blob = await generateSocialCardBlob(revelation, lang);
+  track('social_card_generated', { id: revelation.id });
   const file = new File([blob], `revelacion-${revelation.id}.png`, { type: 'image/png' });
 
   try {

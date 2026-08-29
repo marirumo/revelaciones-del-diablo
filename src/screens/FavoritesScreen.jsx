@@ -2,6 +2,9 @@ import { useState, useEffect } from 'react';
 import { getAllFavorites } from '../lib/storage';
 import { categoryName } from '../data/revelations';
 
+// My Cynicism (PRD §12) — el archivo personal de la visión del mundo del
+// usuario. No es una lista de bookmarks: cada renglón es una revelación
+// que te dolió lo suficiente para guardarla.
 export const FavoritesScreen = ({ lang = 'en', onSelectRevelation }) => {
   const [favorites, setFavorites] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -32,9 +35,9 @@ export const FavoritesScreen = ({ lang = 'en', onSelectRevelation }) => {
 
     const dateStr = new Date().toLocaleDateString(lang === 'es' ? 'es-MX' : 'en-US');
     let content = `==================================================\n`;
-    content += `   REVELACIONES DEL DIABLO — ${lang === 'es' ? 'PRONTUARIO DE CARGOS' : 'RAP SHEET OF INDICTMENTS'}\n`;
+    content += `   ${lang === 'es' ? 'MI CINISMO — COLECCIÓN PERSONAL' : 'MY CYNICISM — A PERSONAL COLLECTION'}\n`;
     content += `   ${lang === 'es' ? 'Fecha de emisión' : 'Issued date'}: ${dateStr}\n`;
-    content += `   ${lang === 'es' ? 'Cargos acumulados' : 'Accumulated offenses'}: ${favorites.length}\n`;
+    content += `   ${lang === 'es' ? 'Revelaciones guardadas' : 'Revelations saved'}: ${favorites.length}\n`;
     content += `==================================================\n\n`;
 
     favorites.forEach((fav, index) => {
@@ -45,11 +48,11 @@ export const FavoritesScreen = ({ lang = 'en', onSelectRevelation }) => {
       const cat = categoryName(rev.category, lang, true);
       const savedDate = fav.savedAt ? new Date(fav.savedAt).toLocaleDateString(lang === 'es' ? 'es-MX' : 'en-US') : '';
 
-      content += `[CARGO #${String(index + 1).padStart(2, '0')}] ${word.toUpperCase()} (${cat.toUpperCase()})\n`;
-      content += `Cita de Ambrose Bierce: "${bierce}"\n`;
-      content += `Revelación: ${revelationText}\n`;
+      content += `[${String(index + 1).padStart(3, '0')}] ${word.toUpperCase()} (${cat.toUpperCase()})\n`;
+      content += `${lang === 'es' ? 'Cita de Ambrose Bierce' : 'Ambrose Bierce quote'}: "${bierce}"\n`;
+      content += `${lang === 'es' ? 'Revelación' : 'Revelation'}: ${revelationText}\n`;
       if (savedDate) {
-        content += `Confesado el: ${savedDate}\n`;
+        content += `${lang === 'es' ? 'Guardado el' : 'Saved on'}: ${savedDate}\n`;
       }
       content += `\n--------------------------------------------------\n\n`;
     });
@@ -58,7 +61,7 @@ export const FavoritesScreen = ({ lang = 'en', onSelectRevelation }) => {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `prontuario-recortes-del-diablo.txt`;
+    a.download = lang === 'es' ? 'mi-cinismo.txt' : 'my-cynicism.txt';
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -89,31 +92,35 @@ export const FavoritesScreen = ({ lang = 'en', onSelectRevelation }) => {
       <div className="max-w-5xl mx-auto px-4 lg:px-8">
         <div className="flex items-baseline justify-between border-t-[3px] border-b border-ink pt-5 pb-4 mb-5">
           <h1 className="font-nameplate font-semibold text-xl tracking-tight uppercase text-ink">
-            {lang === 'es' ? 'Prontuario de Cargos' : 'Rap Sheet of Indictments'}
+            {lang === 'es' ? 'Mi Cinismo' : 'My Cynicism'}
           </h1>
           <span className="font-nameplate text-[11px] text-sub tracking-wider">
-            {favorites.length} {lang === 'es' ? 'cargos' : 'charges'}
+            {favorites.length} {lang === 'es' ? 'guardadas' : 'saved'}
           </span>
         </div>
         <p className="font-serif italic text-sub text-sm mb-8">
-          {lang === 'es'
-            ? 'Evidencia incriminatoria de las verdades que te resultaron demasiado ciertas para ignorarlas.'
-            : 'Incriminating evidence of the truths you found too real to ignore.'}
+          {favorites.length > 0
+            ? (lang === 'es'
+                ? `${favorites.length} revelaciones guardadas. Al parecer, el optimismo no te ha funcionado.`
+                : `${favorites.length} revelations saved. Apparently, optimism has not been working for you.`)
+            : (lang === 'es'
+                ? 'Las verdades que te resultaron demasiado ciertas para ignorarlas.'
+                : 'The truths you found too real to ignore.')}
         </p>
 
         {loading ? (
           <p className="font-nameplate text-sub text-sm py-12 text-center">
-            {lang === 'es' ? 'Cargando expediente…' : 'Loading rap sheet…'}
+            {lang === 'es' ? 'Cargando tu cinismo…' : 'Loading your cynicism…'}
           </p>
         ) : favorites.length === 0 ? (
           <div className="py-12 text-center">
             <p className="font-serif italic text-ink mb-2">
-              {lang === 'es' ? 'Tu expediente está sospechosamente impoluto.' : 'Your record is suspiciously clean.'}
+              {lang === 'es' ? 'Todavía no hay nada aquí que te duela.' : "There's nothing here that stung yet."}
             </p>
             <p className="font-nameplate text-[12px] text-sub">
               {lang === 'es'
-                ? 'Marca alguna verdad con "Esta me llegó" para confesar tus inclinaciones cínicas.'
-                : 'Mark a truth with "This one stung" to confess your cynical leanings.'}
+                ? 'Marca una verdad con "Esta me llegó" para empezar tu colección.'
+                : 'Mark a truth with "This one stung" to start your collection.'}
             </p>
           </div>
         ) : (
@@ -146,7 +153,7 @@ export const FavoritesScreen = ({ lang = 'en', onSelectRevelation }) => {
         {favorites.length > 0 && (
           <div className="mt-8 border-t border-ink pt-6 flex justify-start">
             <button onClick={handleExportTxt} className="byline-link">
-              {lang === 'es' ? 'Exportar recortes (.txt)' : 'Export clippings (.txt)'}
+              {lang === 'es' ? 'Exportar colección (.txt)' : 'Export collection (.txt)'}
             </button>
           </div>
         )}

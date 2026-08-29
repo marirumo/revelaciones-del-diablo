@@ -110,7 +110,7 @@ export const IndexScreen = ({ lang = 'en', onSelectRevelation }) => {
           />
         </div>
 
-        <div className="flex flex-wrap gap-x-4 gap-y-2 mb-6 border-b border-ink/15 pb-4">
+        <div className="flex flex-wrap gap-x-6 gap-y-3 mb-6 border-b border-ink/15 pb-4">
           <button
             onClick={() => setCategory('all')}
             className={`font-nameplate text-[11px] tracking-widest uppercase min-h-11 border-b transition-smooth ${
@@ -123,11 +123,12 @@ export const IndexScreen = ({ lang = 'en', onSelectRevelation }) => {
             <button
               key={cat.id}
               onClick={() => setCategory(cat.id)}
-              className={`font-nameplate text-[11px] tracking-widest uppercase min-h-11 border-b transition-smooth ${
+              className={`font-nameplate text-[11px] tracking-widest uppercase min-h-11 border-b transition-smooth flex items-center gap-1.5 ${
                 category === cat.id ? 'text-ink font-semibold border-accent' : 'text-sub border-transparent hover:text-ink'
               }`}
             >
-              {lang === 'es' ? cat.name : cat.nameEN}
+              <span>{cat.emoji}</span>
+              <span>{lang === 'es' ? cat.name : cat.nameEN}</span>
             </button>
           ))}
         </div>

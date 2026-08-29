@@ -13,8 +13,8 @@ export const AboutScreen = ({ lang = 'en' }) => {
           </div>
         </div>
 
-        <div className="max-w-2xl">
-          <section className="border-t border-ink pt-4 mb-6">
+        <div className="w-full">
+          <section className=" pt-4 mb-6">
             <h2 className="font-nameplate font-semibold text-[11px] tracking-widest uppercase text-sub mb-2">
               {lang === 'es' ? '¿Qué es esto?' : 'What is this?'}
             </h2>

@@ -6,6 +6,15 @@ import { getRevelationForDay, allRevelations } from '../data/revelations';
 import { addFavorite, removeFavorite, isFavorite } from '../lib/storage';
 import { publishRevelation } from '../lib/socialCard';
 
+const formatDate = (lang) => {
+  const d = new Date();
+  return d.toLocaleDateString(lang === 'es' ? 'es-ES' : 'en-US', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'short',
+  });
+};
+
 export const HomeScreen = ({ lang = 'en', dayIndex = 0, streak = 1, selectedRevelation, onSelectRevelation }) => {
   const [currentRevelation, setCurrentRevelation] = useState(selectedRevelation || getRevelationForDay(dayIndex));
   const [favorited, setFavorited] = useState(false);
@@ -19,7 +28,6 @@ export const HomeScreen = ({ lang = 'en', dayIndex = 0, streak = 1, selectedReve
     if (selectedRevelation && selectedRevelation.id !== currentRevelation.id) {
       setCurrentRevelation(selectedRevelation);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedRevelation]);
 
   useEffect(() => {
@@ -79,8 +87,27 @@ export const HomeScreen = ({ lang = 'en', dayIndex = 0, streak = 1, selectedReve
   return (
     <div className="w-full min-h-screen bg-paper pb-20 pt-28">
       <div className="max-w-5xl mx-auto px-4 lg:px-8">
-        <div className="flex justify-center pb-5">
-          <img src="/favicon.svg" alt="" aria-hidden="true" className="w-7 h-7" />
+        <div className="flex flex-wrap items-center justify-between border-b-2 border-ink pb-5 mb-6 gap-4">
+          <div className="flex items-center gap-4 sm:gap-6">
+            <img src="/devil.svg" alt="" aria-hidden="true" className="w-20 h-20 sm:w-28 sm:h-28 object-contain flex-none" />
+            <div>
+              <span className="font-nameplate text-[10px] sm:text-[11px] tracking-widest uppercase text-sub block">
+                {isToday ? (lang === 'es' ? 'Edición' : 'Edition') : (lang === 'es' ? 'Archivo' : 'Archive')}
+              </span>
+              <span className="font-display font-black text-3xl sm:text-5xl text-ink leading-none">
+                {isToday ? `#${dayIndex + 1}` : `#${currentRevelation.number}`}
+              </span>
+            </div>
+          </div>
+
+          <div className="text-right font-nameplate text-[11px] sm:text-[12px] tracking-widest uppercase text-sub leading-snug">
+            <p>
+              {formatDate(lang)} · {lang === 'es' ? 'racha' : 'streak'} {streak}d
+            </p>
+            <p className="mt-1 font-semibold text-ink">
+              {String(currentRevelation.number).padStart(3, '0')} / {allRevelations.length}
+            </p>
+          </div>
         </div>
 
         {!isToday && (
@@ -100,6 +127,7 @@ export const HomeScreen = ({ lang = 'en', dayIndex = 0, streak = 1, selectedReve
           dayIndex={dayIndex}
           revealed={!isToday || unveiledToday}
           onReveal={() => setUnveiledToday(true)}
+          hideHeader={true}
         />
 
         <button

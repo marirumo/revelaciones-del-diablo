@@ -4,7 +4,7 @@ const NAV_ITEMS = [
   { screen: 'home', labelES: 'Hoy', labelEN: 'Today' },
   { screen: 'library', labelES: 'Archivo', labelEN: 'Archive' },
   { screen: 'index', labelES: 'Índice', labelEN: 'Index' },
-  { screen: 'categories', labelES: 'Materias', labelEN: 'Subjects' },
+  { screen: 'categories', labelES: 'Vicios', labelEN: 'Vices' },
   { screen: 'favorites', labelES: 'Mis Cargos', labelEN: 'My Cynicism' },
   { screen: 'stats', labelES: 'El Espejo', labelEN: 'Mirror' },
   { screen: 'about', labelES: 'Acerca de', labelEN: 'About' },

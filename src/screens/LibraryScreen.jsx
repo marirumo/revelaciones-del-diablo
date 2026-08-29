@@ -70,7 +70,7 @@ export const LibraryScreen = ({ lang = 'en', onSelectRevelation, dayIndex = 0 })
         </div>
 
         {/* Sections — palabras planas, la activa subrayada en acento */}
-        <div className="flex flex-wrap gap-x-4 gap-y-2 mb-6 border-b border-ink/15 pb-4">
+        <div className="flex flex-wrap gap-x-6 gap-y-3 mb-6 border-b border-ink/15 pb-4">
           <button
             onClick={() => setSelectedCategory('all')}
             className={`font-nameplate text-[11px] tracking-widest uppercase min-h-11 border-b transition-smooth ${
@@ -83,11 +83,12 @@ export const LibraryScreen = ({ lang = 'en', onSelectRevelation, dayIndex = 0 })
             <button
               key={cat.id}
               onClick={() => setSelectedCategory(cat.id)}
-              className={`font-nameplate text-[11px] tracking-widest uppercase min-h-11 border-b transition-smooth ${
+              className={`font-nameplate text-[11px] tracking-widest uppercase min-h-11 border-b transition-smooth flex items-center gap-1.5 ${
                 selectedCategory === cat.id ? 'text-ink font-semibold border-accent' : 'text-sub border-transparent hover:text-ink'
               }`}
             >
-              {lang === 'es' ? cat.name : cat.nameEN}
+              <span>{cat.emoji}</span>
+              <span>{lang === 'es' ? cat.name : cat.nameEN}</span>
             </button>
           ))}
         </div>
@@ -123,7 +124,7 @@ export const LibraryScreen = ({ lang = 'en', onSelectRevelation, dayIndex = 0 })
                   </span>
                 </span>
                 <span className="font-nameplate text-[9.5px] tracking-widest uppercase text-sub flex-none">
-                  {categoryName(revelation.category, lang)}
+                  {categoryName(revelation.category, lang, true)}
                 </span>
               </button>
             ))}

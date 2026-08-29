@@ -30,6 +30,7 @@ export const RevelationCard = ({
   dayIndex = 0,
   revealed = true,
   onReveal,
+  hideHeader = false,
 }) => {
   const [gifUrl, setGifUrl] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -55,17 +56,19 @@ export const RevelationCard = ({
   const revelationText = lang === 'es' ? revelation.revelationES : revelation.revelationEN;
 
   return (
-    <article className="w-full bg-paper border-t-[3px] border-ink animate-fade-in">
-      <div className="flex items-baseline justify-between border-b border-ink pt-5 pb-3 mb-8">
-        <span className="font-nameplate text-[10px] tracking-widest uppercase text-sub">
-          {isToday
-            ? `${lang === 'es' ? 'Edición' : 'Edition'} #${dayIndex + 1} · ${formatDate(lang)} · ${lang === 'es' ? 'racha' : 'streak'} ${streak}d`
-            : (lang === 'es' ? 'Desde el Archivo' : 'From the Archive')}
-        </span>
-        <span className="font-nameplate text-[10px] tracking-widest uppercase text-sub">
-          {String(revelation.number).padStart(3, '0')} / {allRevelations.length}
-        </span>
-      </div>
+    <article className={`w-full bg-paper animate-fade-in ${hideHeader ? '' : 'border-t-[3px] border-ink'}`}>
+      {!hideHeader && (
+        <div className="flex items-baseline justify-between border-b border-ink pt-5 pb-3 mb-8">
+          <span className="font-nameplate text-[10px] tracking-widest uppercase text-sub">
+            {isToday
+              ? `${lang === 'es' ? 'Edición' : 'Edition'} #${dayIndex + 1} · ${formatDate(lang)} · ${lang === 'es' ? 'racha' : 'streak'} ${streak}d`
+              : (lang === 'es' ? 'Desde el Archivo' : 'From the Archive')}
+          </span>
+          <span className="font-nameplate text-[10px] tracking-widest uppercase text-sub">
+            {String(revelation.number).padStart(3, '0')} / {allRevelations.length}
+          </span>
+        </div>
+      )}
 
       <p className="kicker mb-3">
         {categoryName(revelation.category, lang)}

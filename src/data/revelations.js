@@ -31,10 +31,11 @@ export const categories = [
   { id: "sociedad", emoji: "🌍", name: "Sociedad", nameEN: "Society", count: revelationsByCategory.sociedad.length },
 ];
 
-export const categoryName = (categoryId, lang = 'en') => {
+export const categoryName = (categoryId, lang = 'en', includeEmoji = false) => {
   const cat = categories.find(c => c.id === categoryId);
   if (!cat) return categoryId;
-  return lang === 'es' ? cat.name : cat.nameEN;
+  const name = lang === 'es' ? cat.name : cat.nameEN;
+  return includeEmoji ? `${cat.emoji} ${name}` : name;
 };
 
 // Orden de desbloqueo diario (no alfabético): revelationsByUnlockDay[0] es la

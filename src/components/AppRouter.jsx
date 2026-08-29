@@ -144,7 +144,11 @@ export const AppRouter = () => {
 
   if (showWelcome) {
     return (
-      <WelcomeScreen lang={lang} onComplete={handleWelcomeComplete} />
+      <WelcomeScreen
+        lang={lang}
+        onLanguageChange={handleLanguageChange}
+        onComplete={handleWelcomeComplete}
+      />
     );
   }
 

@@ -1,4 +1,6 @@
-export const WelcomeScreen = ({ lang = 'en', onComplete }) => {
+import { LanguageToggle } from '../components/LanguageToggle';
+
+export const WelcomeScreen = ({ lang = 'en', onLanguageChange, onComplete }) => {
   const labels = lang === 'es'
     ? {
         tagline: 'Una verdad incómoda cada día, directo del Diccionario del Diablo.',
@@ -12,7 +14,11 @@ export const WelcomeScreen = ({ lang = 'en', onComplete }) => {
       };
 
   return (
-    <div className="w-full min-h-screen bg-paper flex items-center justify-center px-5">
+    <div className="relative w-full min-h-screen bg-paper flex items-center justify-center px-5 pt-16 sm:pt-0">
+      <div className="absolute top-6 right-6 z-10">
+        <LanguageToggle currentLang={lang} onLanguageChange={onLanguageChange} />
+      </div>
+
       <div className="w-full max-w-md border-t-[3px] border-ink">
         <div className="text-center py-10 px-2">
           <p className="kicker mb-6">

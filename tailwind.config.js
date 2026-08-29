@@ -16,7 +16,7 @@ export default {
         paper: '#F7F5EE',
         ink: '#141311',
         sub: '#767061',
-        accent: '#C4301B',
+        accent: '#E11D48',
       },
     },
   },

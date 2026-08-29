@@ -1,13 +1,18 @@
 import { useState, useEffect } from 'react';
 import { RevelationCard } from '../components/RevelationCard';
 import { BackLink } from '../components/BackLink';
+import { DevilsAdvocateModal } from '../components/DevilsAdvocateModal';
 import { getRevelationForDay, allRevelations } from '../data/revelations';
 import { addFavorite, removeFavorite, isFavorite } from '../lib/storage';
+import { publishRevelation } from '../lib/socialCard';
 
 export const HomeScreen = ({ lang = 'en', dayIndex = 0, streak = 1, selectedRevelation, onSelectRevelation }) => {
   const [currentRevelation, setCurrentRevelation] = useState(selectedRevelation || getRevelationForDay(dayIndex));
   const [favorited, setFavorited] = useState(false);
   const [todayRevelation] = useState(getRevelationForDay(dayIndex));
+  const [unveiledToday, setUnveiledToday] = useState(false);
+  const [showAdvocate, setShowAdvocate] = useState(false);
+  const [shareNotice, setShareNotice] = useState('');
 
   // Cuando el usuario elige una revelación desde Archivo/Materias, mostrarla aquí
   useEffect(() => {
@@ -27,20 +32,21 @@ export const HomeScreen = ({ lang = 'en', dayIndex = 0, streak = 1, selectedReve
 
   const isToday = currentRevelation.id === todayRevelation.id;
 
-  const handleShare = () => {
-    const text = lang === 'es'
-      ? `${currentRevelation.wordES}\n\n"${currentRevelation.revelationES}"\n\n— Revelaciones del Diablo`
-      : `${currentRevelation.wordEN}\n\n"${currentRevelation.revelationEN}"\n\n— Devil's Revelations`;
-
-    if (navigator.share) {
-      navigator.share({
-        title: 'Revelaciones del Diablo',
-        text: text,
-        url: window.location.href,
-      }).catch(err => console.log('Error sharing:', err));
-    } else {
-      navigator.clipboard.writeText(text);
-      alert(lang === 'es' ? 'Copiado al portapapeles' : 'Copied to clipboard');
+  const handleShare = async () => {
+    try {
+      const result = await publishRevelation(currentRevelation, lang);
+      if (result.method === 'download') {
+        setShareNotice(
+          lang === 'es'
+            ? 'Imagen descargada. Enlace copiado al portapapeles.'
+            : 'Image downloaded. Link copied to clipboard.'
+        );
+        setTimeout(() => setShareNotice(''), 4000);
+      }
+    } catch (error) {
+      if (error.name !== 'AbortError') {
+        console.error('Error publishing revelation:', error);
+      }
     }
   };
 
@@ -48,10 +54,12 @@ export const HomeScreen = ({ lang = 'en', dayIndex = 0, streak = 1, selectedReve
     try {
       if (favorited) {
         await removeFavorite(currentRevelation.id);
+        setFavorited(false);
       } else {
         await addFavorite(currentRevelation);
+        setFavorited(true);
+        setShowAdvocate(true);
       }
-      setFavorited(!favorited);
     } catch (error) {
       console.error('Error toggling favorite:', error);
     }
@@ -71,6 +79,10 @@ export const HomeScreen = ({ lang = 'en', dayIndex = 0, streak = 1, selectedReve
   return (
     <div className="w-full min-h-screen bg-paper pb-20 pt-28">
       <div className="max-w-5xl mx-auto px-4 lg:px-8">
+        <div className="flex justify-center pb-5">
+          <img src="/favicon.svg" alt="" aria-hidden="true" className="w-7 h-7" />
+        </div>
+
         {!isToday && (
           <BackLink onClick={handleBackToToday}>
             {lang === 'es' ? 'Volver a Hoy' : 'Back to Today'}
@@ -85,6 +97,9 @@ export const HomeScreen = ({ lang = 'en', dayIndex = 0, streak = 1, selectedReve
           onFavorite={handleFavorite}
           isToday={isToday}
           streak={streak}
+          dayIndex={dayIndex}
+          revealed={!isToday || unveiledToday}
+          onReveal={() => setUnveiledToday(true)}
         />
 
         <button
@@ -93,7 +108,17 @@ export const HomeScreen = ({ lang = 'en', dayIndex = 0, streak = 1, selectedReve
         >
           {lang === 'es' ? 'Sorpréndeme →' : 'Surprise me →'}
         </button>
+
+        {shareNotice && (
+          <p className="mt-3 font-nameplate text-[11px] tracking-wide text-sub" role="status">
+            {shareNotice}
+          </p>
+        )}
       </div>
+
+      {showAdvocate && (
+        <DevilsAdvocateModal lang={lang} onClose={() => setShowAdvocate(false)} />
+      )}
     </div>
   );
 };

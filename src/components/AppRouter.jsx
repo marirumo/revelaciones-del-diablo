@@ -10,6 +10,8 @@ import { AboutScreen } from '../screens/AboutScreen';
 import { WelcomeScreen } from '../screens/WelcomeScreen';
 import { AppHeader } from './AppHeader';
 import { getLanguage, getFirstVisitDayIndex, getStreak, getHasSeenWelcome, setHasSeenWelcome } from '../lib/storage';
+import { getRevelationIdFromHash } from '../lib/deepLink';
+import { allRevelations } from '../data/revelations';
 
 export const AppRouter = () => {
   const [currentScreen, setCurrentScreen] = useState('home');
@@ -34,6 +36,18 @@ export const AppRouter = () => {
       setDayIndex(firstVisitDayIndex);
       setStreak(currentStreak);
       setShowWelcome(!hasSeenWelcome);
+
+      // Deep link (#r/id) desde una tarjeta compartida: abrir esa
+      // revelación directo en Hoy en vez del "today" calculado.
+      const sharedId = getRevelationIdFromHash();
+      if (sharedId) {
+        const shared = allRevelations.find(r => String(r.id) === sharedId);
+        if (shared) {
+          setSelectedRevelation(shared);
+          setCurrentScreen('home');
+        }
+      }
+
       setIsLoading(false);
     };
     loadInitialState();

@@ -136,8 +136,13 @@ export const getPreference = async (key) => {
   });
 };
 
+// Sin preferencia guardada: si el navegador está en español, arrancamos en
+// ES-LatAm (PRD: detección por navigator.language); si no, el default es EN.
 export const getLanguage = async () => {
-  return (await getPreference('language')) || 'en';
+  const stored = await getPreference('language');
+  if (stored) return stored;
+  const browserLang = typeof navigator !== 'undefined' ? navigator.language : '';
+  return browserLang?.toLowerCase().startsWith('es') ? 'es' : 'en';
 };
 
 export const setLanguage = async (lang) => {

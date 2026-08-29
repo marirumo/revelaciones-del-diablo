@@ -10,13 +10,13 @@ No es una app de horror ni una simple colección de frases. Es un **ritual edito
 
 ## ✦ Concepto
 
-**365 revelaciones. Una nueva edición cada día.**
+**956 revelaciones. Una nueva edición cada día.**
 
 La experiencia gira alrededor de:
 
 - **Today** — la revelación del día
 - **Surprise Me** — consulta al Diablo y descubre algo inesperado
-- **The Index of Defeats** — explora las 365 revelaciones
+- **The Index of Defeats** — explora las 956 revelaciones
 - **Subjects** — descubre de qué nos gusta ser cínicos
 - **My Cynicism** — tu colección personal de verdades incómodas
 - **Mirror** — una lectura satírica de tu colección
@@ -85,7 +85,7 @@ Queremos que piense:
 
 - 📖 **Daily Ritual** — una revelación editorial cada día
 - 🎲 **Surprise Me** — revelación aleatoria sin repetición inmediata
-- 📚 **Index of Defeats** — archivo completo de 365 entradas
+- 📚 **Index of Defeats** — archivo completo de 956 entradas
 - 🏷️ **Subjects** — explora por tema
 - 🩸 **This One Stung** — guarda tus revelaciones
 - 🪞 **Mirror** — descubre qué dice tu colección sobre ti
@@ -168,31 +168,43 @@ npm run preview
 ```text
 src/
 ├── components/
-│   ├── TopNav.jsx
-│   ├── BottomNav.jsx
-│   ├── RevelationCard.jsx
-│   └── AppRouter.jsx
+│   ├── AppHeader.jsx
+│   ├── AppRouter.jsx
+│   ├── BackLink.jsx
+│   ├── DevilsAdvocateModal.jsx
+│   ├── LanguageToggle.jsx
+│   └── RevelationCard.jsx
 ├── screens/
-│   ├── HomeScreen.jsx
-│   ├── RevelationScreen.jsx
-│   ├── ArchiveScreen.jsx
-│   ├── SubjectsScreen.jsx
-│   ├── MyCynicismScreen.jsx
-│   ├── MirrorScreen.jsx
-│   └── AboutScreen.jsx
+│   ├── AboutScreen.jsx
+│   ├── CategoriesScreen.jsx      # Subjects
+│   ├── CategoryDetailScreen.jsx
+│   ├── FavoritesScreen.jsx       # My Cynicism
+│   ├── HomeScreen.jsx            # Today
+│   ├── IndexScreen.jsx           # The Index of Defeats
+│   ├── StatsScreen.jsx           # Mirror
+│   └── WelcomeScreen.jsx
 ├── lib/
-│   ├── storage.js
-│   ├── sharing.js
-│   └── giphy.js
+│   ├── analytics.js
+│   ├── deepLink.js
+│   ├── giphy.js
+│   ├── mirror.js
+│   ├── pwa.js
+│   ├── socialCard.js
+│   └── storage.js
 ├── data/
-│   └── revelations.js
+│   ├── devilsAdvocate.js
+│   ├── identity.js
+│   ├── progression.js
+│   ├── revelations.js
+│   └── revelations.generated.json
 ├── styles/
+│   ├── animations.css
 │   └── globals.css
 ├── App.jsx
 └── main.jsx
 ```
 
-> La estructura puede evolucionar durante la implementación. Los nombres anteriores representan la arquitectura de producto objetivo, no una obligación de mantener exactamente cada archivo.
+> Los nombres de pantalla no siempre coinciden con el nombre de la experiencia en el PRD (p. ej. `FavoritesScreen.jsx` implementa "My Cynicism", `StatsScreen.jsx` implementa "Mirror"). Se anota la correspondencia arriba.
 
 ## ✦ Almacenamiento
 
@@ -250,7 +262,7 @@ npm run build
 - This One Stung
 - Sharing
 - Yesterday / Tomorrow
-- 365 revelations
+- 956 revelations
 - EN / ES
 - IndexedDB
 - PWA responsive

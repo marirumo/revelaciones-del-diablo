@@ -30,7 +30,7 @@ La estrategia de producto se apoya en cuatro momentos fundamentales:
 
 ### Visión
 
-Convertir una colección de 365 revelaciones satíricas en un **ritual diario de observación, cinismo y descubrimiento personal**.
+Convertir una colección de 956 revelaciones satíricas en un **ritual diario de observación, cinismo y descubrimiento personal**.
 
 ### Posicionamiento
 
@@ -40,7 +40,7 @@ Posibles líneas editoriales:
 
 - *For people who find optimism suspicious.*
 - *A daily dose of uncomfortable truths.*
-- *365 observations humanity would rather not hear.*
+- *956 observations humanity would rather not hear.*
 
 ### Qué NO es
 
@@ -68,7 +68,7 @@ Su presencia debe sentirse más como una voz editorial que como un avatar.
 3. Hacer que guardar una revelación tenga significado emocional.
 4. Convertir la colección personal en una experiencia de identidad.
 5. Crear artefactos sociales atractivos y reconocibles.
-6. Hacer que explorar las 365 revelaciones sea entretenido.
+6. Hacer que explorar las 956 revelaciones sea entretenido.
 7. Mantener una experiencia editorial premium en EN + ES-LatAm.
 8. Permitir uso offline mediante PWA + almacenamiento local.
 
@@ -310,7 +310,7 @@ THE INDEX OF DEFEATS
 ...
 047  LOVE
 ...
-365  YOUTH
+956  YOUTH
 ```
 
 ## Funcionalidad
@@ -320,7 +320,7 @@ THE INDEX OF DEFEATS
 - filtros por subject
 - orden alfabético
 - orden por fecha/edición
-- indicador de progreso `N / 365`
+- indicador de progreso `N / 956`
 - acceso directo a cualquier revelación
 
 ## Dirección visual
@@ -560,7 +560,7 @@ most marriages.
 — REVELACIONES
   DEL DIABLO
 
-047 / 365
+047 / 956
 ```
 
 ## Variantes futuras
@@ -592,7 +592,7 @@ El usuario debe obtener valor sin registrarse.
 REVELACIONES
 DEL DIABLO
 
-365 observations humanity
+956 observations humanity
 would rather not hear.
 ```
 
@@ -820,7 +820,7 @@ La experiencia debe funcionar especialmente bien en:
 
 Offline:
 
-- 365 revelations disponibles localmente
+- 956 revelations disponibles localmente
 - collection local
 - navegación principal
 - sharing cuando el sistema lo permita
@@ -956,7 +956,7 @@ Tipos:
 - Save / This One Stung
 - share
 - yesterday/tomorrow
-- 365 revelations
+- 956 revelations
 - EN / ES
 - local persistence
 - responsive PWA
@@ -1118,7 +1118,7 @@ Diseñar primero, en este orden:
 
 ### 5. Archive
 
-¿Explorar 365 entradas resulta atractivo?
+¿Explorar 956 entradas resulta atractivo?
 
 ### 6. Devil's Advocate
 
@@ -1147,7 +1147,7 @@ El producto debe convertir:
 
 # 34. Long-term vision
 
-El corpus de 365 revelaciones no debe ser el final del producto.
+El corpus de 956 revelaciones no debe ser el final del producto.
 
 Puede convertirse en una publicación anual:
 

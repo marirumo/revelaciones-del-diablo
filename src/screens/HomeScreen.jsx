@@ -161,7 +161,7 @@ export const HomeScreen = ({ lang = 'en', dayIndex = 0, streak = 1, selectedReve
               {lang === 'es' ? '¿Se equivocó esta vez?' : 'Did he get this one wrong?'}
             </p>
             <button onClick={handleOpenAdvocate} className="byline-link">
-              {lang === 'es' ? 'Dígale por qué →' : 'Tell him why →'}
+              {lang === 'es' ? 'Dile por qué →' : 'Tell him why →'}
             </button>
           </div>
         )}

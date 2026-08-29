@@ -11,13 +11,13 @@ export const buildConclusion = (categoryCounts = {}, lang = 'en') => {
 
   if (entries.length === 1) {
     return lang === 'es'
-      ? `Todo lo que ha guardado hasta ahora tiene que ver con ${dominant}. Curioso.`
+      ? `Todo lo que has guardado hasta ahora tiene que ver con ${dominant}. Curioso.`
       : `Everything you've saved so far is about ${dominant}. Curious.`;
   }
 
   const gentlest = categoryName(entries[entries.length - 1][0], lang).toLowerCase();
 
   return lang === 'es'
-    ? `Desconfía de ${dominant}, pero se mantiene extrañamente en paz con ${gentlest}. Curioso.`
+    ? `Desconfías de ${dominant}, pero te mantienes extrañamente en paz con ${gentlest}. Curioso.`
     : `You distrust ${dominant}, but remain strangely at peace with ${gentlest}. Curious.`;
 };

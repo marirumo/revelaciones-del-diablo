@@ -20,10 +20,10 @@ export const WelcomeScreen = ({ lang = 'en', onComplete }) => {
           </p>
 
           <h1 className="font-display font-black uppercase text-ink leading-[0.92] text-[clamp(2.2rem,9vw,3.1rem)] mb-1 text-balance">
-            Revelaciones
+            {lang === 'es' ? 'Revelaciones' : "Devil's"}
           </h1>
           <h1 className="font-display font-black uppercase text-ink leading-[0.92] text-[clamp(2.2rem,9vw,3.1rem)] mb-6">
-            {lang === 'es' ? 'del Diablo' : 'of the Devil'}
+            {lang === 'es' ? 'del Diablo' : 'Revelations'}
           </h1>
 
           <hr className="border-ink w-16 mx-auto mb-6" />

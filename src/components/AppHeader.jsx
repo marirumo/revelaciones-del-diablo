@@ -21,7 +21,7 @@ export const AppHeader = ({ currentScreen, onNavigate, lang, onLanguageChange, s
           onClick={() => onNavigate('home')}
           className="font-nameplate font-semibold text-[12px] tracking-[.14em] uppercase text-ink"
         >
-          Revelaciones del Diablo
+          {lang === 'es' ? 'Revelaciones del Diablo' : "Devil's Revelations"}
         </button>
         <div className="flex items-center gap-3">
           <span className="hidden sm:inline font-nameplate text-[10px] tracking-widest uppercase text-sub">

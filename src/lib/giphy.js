@@ -4,7 +4,9 @@
 const GIPHY_API_KEY = import.meta.env.VITE_GIPHY_API_KEY || '';
 const GIPHY_BASE_URL = 'https://api.giphy.com/v1/gifs/search';
 
-// GIFs fallback para cuando no funciona la API
+const gifCache = new Map();
+
+// GIFs fallback para cuando no funciona la API o no hay API key
 const FALLBACK_GIFS = [
   'https://media.giphy.com/media/3o7TKU0bFa6q5IHjAQ/giphy.gif', // Success
   'https://media.giphy.com/media/l0HlNaQ9hNzQn8AyI/giphy.gif', // Thinking
@@ -14,28 +16,44 @@ const FALLBACK_GIFS = [
 ];
 
 export const fetchGif = async (query, lang = 'en') => {
+  if (!query) return getRandomFallbackGif();
+
+  const cacheKey = `${query.toLowerCase()}_${lang}`;
+  if (gifCache.has(cacheKey)) {
+    return gifCache.get(cacheKey);
+  }
+
   try {
     if (!GIPHY_API_KEY) {
       console.warn('No GIPHY_API_KEY provided, using fallback');
-      return getRandomFallbackGif();
+      const fallback = getRandomFallbackGif();
+      gifCache.set(cacheKey, fallback);
+      return fallback;
     }
 
     const params = new URLSearchParams({
       api_key: GIPHY_API_KEY,
       q: query,
-      limit: 1,
-      offset: Math.floor(Math.random() * 100),
+      limit: 10,
+      offset: 0,
       rating: 'pg-13',
+      lang: lang === 'es' ? 'es' : 'en',
     });
 
     const response = await fetch(`${GIPHY_BASE_URL}?${params}`);
     const data = await response.json();
 
     if (data.data && data.data.length > 0) {
-      return data.data[0].images.original.url;
+      // Elegir uno de los primeros resultados para asegurar alta relevancia al término e idioma
+      const randomIndex = Math.floor(Math.random() * Math.min(data.data.length, 5));
+      const url = data.data[randomIndex].images.original.url;
+      gifCache.set(cacheKey, url);
+      return url;
     }
 
-    return getRandomFallbackGif();
+    const fallback = getRandomFallbackGif();
+    gifCache.set(cacheKey, fallback);
+    return fallback;
   } catch (error) {
     console.error('Error fetching from Giphy:', error);
     return getRandomFallbackGif();
